@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match API Tester</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../dashboard.html" class="back-btn">← Back to Dashboard</a>
+            <h1>🎯 Match API Tester</h1>
+            <p>Match scoring and statistics</p>
+        </header>
+
+        <div class="api-tester">
+            <section class="endpoint">
+                <h2>Calculate Final Score</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/match/users/{userId}/score</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="match-user-id" placeholder="User UUID">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/match/users/${document.getElementById('match-user-id').value}/score`, null, 'calc-response')">Calculate Score</button>
+                <div class="response-container" id="calc-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>End Match</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/match/users/{userId}/end</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="end-match-user-id" placeholder="User UUID">
+                </div>
+                <div class="form-group">
+                    <label>Final Score</label>
+                    <input type="number" id="end-match-score" placeholder="e.g., 2500">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', `/api/match/users/${document.getElementById('end-match-user-id').value}/end?finalScore=${document.getElementById('end-match-score').value}`, {}, 'end-response')">End Match</button>
+                <div class="response-container" id="end-response"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+</body>
+</html>

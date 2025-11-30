@@ -1,0 +1,23 @@
+package com.UnderUpb.backendUnderUpb.utils;
+
+import lombok.NonNull;
+import org.json.JSONObject;
+
+import java.util.Base64;
+import java.util.regex.Pattern;
+
+public class JWTUtils {
+    private JWTUtils(){}
+    public static boolean isTokenExpired(@NonNull String jwt, String fieldNameExp, @NonNull Long ventana)  {
+        String aux = jwt.split(Pattern.quote("."))[1];
+
+        JSONObject element = new JSONObject(new String(Base64.getDecoder().decode(aux)));
+        long timeExpire = element.getLong(fieldNameExp==null || fieldNameExp.isBlank() ? "exp" : fieldNameExp);
+        return System.currentTimeMillis() >= (timeExpire * 1000) + ventana;
+    }
+
+    public static JSONObject getPayload(@NonNull String jwt)  {
+        String aux = jwt.split(Pattern.quote("."))[1];
+        return new JSONObject(new String(Base64.getDecoder().decode(aux)));
+    }
+}

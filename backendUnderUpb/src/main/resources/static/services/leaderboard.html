@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard API Tester</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../dashboard.html" class="back-btn">← Back to Dashboard</a>
+            <h1>🏆 Leaderboard API Tester</h1>
+            <p>Player rankings and scores</p>
+        </header>
+
+        <div class="api-tester">
+            <section class="endpoint">
+                <h2>Top Players</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/leaderboard/top</div>
+                <div class="form-group">
+                    <label>Limit</label>
+                    <input type="number" id="leaderboard-limit" value="10" placeholder="e.g., 10">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/leaderboard/top?limit=${document.getElementById('leaderboard-limit').value}`, null, 'top-response')">Fetch Top Players</button>
+                <div class="response-container" id="top-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Top Players (Paginated)</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/leaderboard/top/paginated</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Page</label>
+                        <input type="number" id="leaderboard-page" value="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Page Size</label>
+                        <input type="number" id="leaderboard-size" value="10" placeholder="10">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/leaderboard/top/paginated?page=${document.getElementById('leaderboard-page').value}&size=${document.getElementById('leaderboard-size').value}`, null, 'top-paged-response')">Fetch Paginated</button>
+                <div class="response-container" id="top-paged-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>User Scores</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/leaderboard/users/{userId}</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="user-scores-id" placeholder="User UUID">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Page</label>
+                        <input type="number" id="user-scores-page" value="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Page Size</label>
+                        <input type="number" id="user-scores-size" value="10" placeholder="10">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/leaderboard/users/${document.getElementById('user-scores-id').value}?page=${document.getElementById('user-scores-page').value}&size=${document.getElementById('user-scores-size').value}`, null, 'user-scores-response')">Fetch User Scores</button>
+                <div class="response-container" id="user-scores-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Record Score</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/leaderboard/users/{userId}/score</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="record-score-user-id" placeholder="User UUID">
+                </div>
+                <div class="form-group">
+                    <label>Score</label>
+                    <input type="number" id="record-score-value" placeholder="e.g., 1500">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', `/api/leaderboard/users/${document.getElementById('record-score-user-id').value}/score?score=${document.getElementById('record-score-value').value}`, {}, 'record-response')">Record Score</button>
+                <div class="response-container" id="record-response"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+</body>
+</html>

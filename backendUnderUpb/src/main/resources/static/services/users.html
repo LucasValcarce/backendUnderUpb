@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users API Tester</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../dashboard.html" class="back-btn">← Back to Dashboard</a>
+            <h1>👤 Users API Tester</h1>
+            <p>Manage player accounts and profiles</p>
+        </header>
+
+        <div class="api-tester">
+            <!-- Create User -->
+            <section class="endpoint">
+                <h2>Create User</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/users</div>
+                
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="create-user-name" placeholder="e.g., Player123">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Life Points</label>
+                        <input type="number" id="create-user-life" value="3" placeholder="e.g., 3">
+                    </div>
+                    <div class="form-group">
+                        <label>Score</label>
+                        <input type="number" id="create-user-score" value="0" placeholder="e.g., 0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Level</label>
+                        <input type="number" id="create-user-level" value="1" placeholder="e.g., 1">
+                    </div>
+                    <div class="form-group">
+                        <label>Inventory (JSON)</label>
+                        <input type="text" id="create-user-inventory" placeholder="e.g., {}" value="{}">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/users', {
+                    name: document.getElementById('create-user-name').value,
+                    lifePoints: parseInt(document.getElementById('create-user-life').value),
+                    score: parseInt(document.getElementById('create-user-score').value),
+                    currentLevel: parseInt(document.getElementById('create-user-level').value),
+                    inventory: document.getElementById('create-user-inventory').value
+                }, 'create-response')">Create User</button>
+                <div class="response-container" id="create-response"></div>
+            </section>
+
+            <!-- List Users -->
+            <section class="endpoint">
+                <h2>List Users</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/users</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Page (0-indexed)</label>
+                        <input type="number" id="users-page" value="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Page Size</label>
+                        <input type="number" id="users-size" value="10" placeholder="10">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/users?page=${document.getElementById('users-page').value}&size=${document.getElementById('users-size').value}`, null, 'list-response')">Fetch Users</button>
+                <div class="response-container" id="list-response"></div>
+            </section>
+
+            <!-- Get User by ID -->
+            <section class="endpoint">
+                <h2>Get User by ID</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/users/{id}</div>
+                
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="get-user-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/users/${document.getElementById('get-user-id').value}`, null, 'get-response')">Fetch User</button>
+                <div class="response-container" id="get-response"></div>
+            </section>
+
+            <!-- Update User -->
+            <section class="endpoint">
+                <h2>Update User</h2>
+                <div class="method-badge">PUT</div>
+                <div class="endpoint-url">/api/users/{id}</div>
+                
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="update-user-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="update-user-name" placeholder="New username">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Life Points</label>
+                        <input type="number" id="update-user-life" placeholder="e.g., 5">
+                    </div>
+                    <div class="form-group">
+                        <label>Score</label>
+                        <input type="number" id="update-user-score" placeholder="e.g., 100">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/users/${document.getElementById('update-user-id').value}`, {
+                    name: document.getElementById('update-user-name').value || undefined,
+                    lifePoints: document.getElementById('update-user-life').value ? parseInt(document.getElementById('update-user-life').value) : undefined,
+                    score: document.getElementById('update-user-score').value ? parseInt(document.getElementById('update-user-score').value) : undefined
+                }, 'update-response')">Update User</button>
+                <div class="response-container" id="update-response"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+</body>
+</html>

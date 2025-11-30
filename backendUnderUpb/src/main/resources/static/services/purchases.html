@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchases API Tester</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../dashboard.html" class="back-btn">← Back to Dashboard</a>
+            <h1>🛒 Purchases API Tester</h1>
+            <p>In-game purchases and payment orders</p>
+        </header>
+
+        <div class="api-tester">
+            <section class="endpoint">
+                <h2>Create Purchase Order</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/purchases/orders</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="purchase-user-id" placeholder="User UUID">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="purchase-amount" value="9.99" placeholder="e.g., 9.99">
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <input type="text" id="purchase-currency" value="USD" placeholder="e.g., USD">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <input type="text" id="purchase-desc" placeholder="e.g., 1000 Gold Coins">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/purchases/orders', {
+                    userId: document.getElementById('purchase-user-id').value,
+                    amount: parseFloat(document.getElementById('purchase-amount').value),
+                    currency: document.getElementById('purchase-currency').value,
+                    description: document.getElementById('purchase-desc').value
+                }, 'create-response')">Create Order</button>
+                <div class="response-container" id="create-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Get Purchase Order</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/purchases/orders/{id}</div>
+                <div class="form-group">
+                    <label>Order ID (UUID)</label>
+                    <input type="text" id="get-order-id" placeholder="Order UUID">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/purchases/orders/${document.getElementById('get-order-id').value}`, null, 'get-response')">Fetch Order</button>
+                <div class="response-container" id="get-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Complete Purchase Order</h2>
+                <div class="method-badge">PUT</div>
+                <div class="endpoint-url">/api/purchases/orders/{id}/complete</div>
+                <div class="form-group">
+                    <label>Order ID (UUID)</label>
+                    <input type="text" id="complete-order-id" placeholder="Order UUID">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/purchases/orders/${document.getElementById('complete-order-id').value}/complete`, {}, 'complete-response')">Complete Order</button>
+                <div class="response-container" id="complete-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Fail Purchase Order</h2>
+                <div class="method-badge">PUT</div>
+                <div class="endpoint-url">/api/purchases/orders/{id}/fail</div>
+                <div class="form-group">
+                    <label>Order ID (UUID)</label>
+                    <input type="text" id="fail-order-id" placeholder="Order UUID">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/purchases/orders/${document.getElementById('fail-order-id').value}/fail`, {}, 'fail-response')">Fail Order</button>
+                <div class="response-container" id="fail-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Payment Webhook</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/purchases/webhook/payment-callback</div>
+                <div class="form-group">
+                    <label>Order ID (UUID)</label>
+                    <input type="text" id="webhook-order-id" placeholder="Order UUID">
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <input type="text" id="webhook-status" placeholder="e.g., COMPLETED, FAILED">
+                </div>
+                <div class="form-group">
+                    <label>Transaction ID</label>
+                    <input type="text" id="webhook-transaction-id" placeholder="Payment processor transaction ID">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/purchases/webhook/payment-callback', {
+                    orderId: document.getElementById('webhook-order-id').value,
+                    status: document.getElementById('webhook-status').value,
+                    transactionId: document.getElementById('webhook-transaction-id').value
+                }, 'webhook-response')">Send Webhook</button>
+                <div class="response-container" id="webhook-response"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Games API Tester</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../dashboard.html" class="back-btn">← Back to Dashboard</a>
+            <h1>💾 Save Games API Tester</h1>
+            <p>Game state persistence and management</p>
+        </header>
+
+        <div class="api-tester">
+            <section class="endpoint">
+                <h2>Save Game</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/save</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="save-user-id" placeholder="User UUID">
+                </div>
+                <div class="form-group">
+                    <label>Game State (JSON)</label>
+                    <textarea id="save-state" placeholder='{"level": 5, "position": {"x": 100, "y": 200}}'></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Version</label>
+                    <input type="number" id="save-version" value="1" placeholder="e.g., 1">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/save', {
+                    userId: document.getElementById('save-user-id').value,
+                    stateJson: document.getElementById('save-state').value,
+                    version: parseInt(document.getElementById('save-version').value)
+                }, 'save-response')">Save Game</button>
+                <div class="response-container" id="save-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Get Latest Save</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/save/users/{userId}/latest</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="latest-save-user-id" placeholder="User UUID">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/save/users/${document.getElementById('latest-save-user-id').value}/latest`, null, 'latest-response')">Fetch Latest Save</button>
+                <div class="response-container" id="latest-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Get All Saves for User</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/save/users/{userId}</div>
+                <div class="form-group">
+                    <label>User ID (UUID)</label>
+                    <input type="text" id="user-saves-id" placeholder="User UUID">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Page</label>
+                        <input type="number" id="saves-page" value="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Page Size</label>
+                        <input type="number" id="saves-size" value="10" placeholder="10">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/save/users/${document.getElementById('user-saves-id').value}?page=${document.getElementById('saves-page').value}&size=${document.getElementById('saves-size').value}`, null, 'all-saves-response')">Fetch Saves</button>
+                <div class="response-container" id="all-saves-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Validate Save</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/save/{id}/validate</div>
+                <div class="form-group">
+                    <label>Save ID (UUID)</label>
+                    <input type="text" id="validate-save-id" placeholder="Save UUID">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', `/api/save/${document.getElementById('validate-save-id').value}/validate`, {}, 'validate-response')">Validate Save</button>
+                <div class="response-container" id="validate-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Delete Save</h2>
+                <div class="method-badge delete">DELETE</div>
+                <div class="endpoint-url">/api/save/{id}</div>
+                <div class="form-group">
+                    <label>Save ID (UUID)</label>
+                    <input type="text" id="delete-save-id" placeholder="Save UUID">
+                </div>
+                <button class="btn btn-danger" onclick="sendRequest('DELETE', `/api/save/${document.getElementById('delete-save-id').value}`, null, 'delete-response')">Delete Save</button>
+                <div class="response-container" id="delete-response"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+</body>
+</html>

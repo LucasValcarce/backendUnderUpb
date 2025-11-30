@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Levels API Tester</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="../dashboard.html" class="back-btn">← Back to Dashboard</a>
+            <h1>🏰 Levels API Tester</h1>
+            <p>Create and manage game levels</p>
+        </header>
+
+        <div class="api-tester">
+            <section class="endpoint">
+                <h2>Create Level</h2>
+                <div class="method-badge">POST</div>
+                <div class="endpoint-url">/api/levels</div>
+                <div class="form-group">
+                    <label>Level Name</label>
+                    <input type="text" id="create-level-name" placeholder="e.g., Forest Temple">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="create-level-desc" placeholder="Level description..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Required XP</label>
+                        <input type="number" id="create-level-xp" value="100" placeholder="e.g., 100">
+                    </div>
+                    <div class="form-group">
+                        <label>Order Index</label>
+                        <input type="number" id="create-level-order" value="1" placeholder="e.g., 1">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/levels', {
+                    name: document.getElementById('create-level-name').value,
+                    description: document.getElementById('create-level-desc').value,
+                    requiredXp: parseInt(document.getElementById('create-level-xp').value),
+                    orderIndex: parseInt(document.getElementById('create-level-order').value)
+                }, 'create-response')">Create Level</button>
+                <div class="response-container" id="create-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>List Levels</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/levels</div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Page</label>
+                        <input type="number" id="levels-page" value="0" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Page Size</label>
+                        <input type="number" id="levels-size" value="10" placeholder="10">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/levels?page=${document.getElementById('levels-page').value}&size=${document.getElementById('levels-size').value}`, null, 'list-response')">Fetch Levels</button>
+                <div class="response-container" id="list-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Get Level by ID</h2>
+                <div class="method-badge">GET</div>
+                <div class="endpoint-url">/api/levels/{id}</div>
+                <div class="form-group">
+                    <label>Level ID (UUID)</label>
+                    <input type="text" id="get-level-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/levels/${document.getElementById('get-level-id').value}`, null, 'get-response')">Fetch Level</button>
+                <div class="response-container" id="get-response"></div>
+            </section>
+
+            <section class="endpoint">
+                <h2>Update Level</h2>
+                <div class="method-badge">PUT</div>
+                <div class="endpoint-url">/api/levels/{id}</div>
+                <div class="form-group">
+                    <label>Level ID (UUID)</label>
+                    <input type="text" id="update-level-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
+                </div>
+                <div class="form-group">
+                    <label>Level Name</label>
+                    <input type="text" id="update-level-name" placeholder="New name">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="update-level-desc" placeholder="New description..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/levels/${document.getElementById('update-level-id').value}`, {
+                    name: document.getElementById('update-level-name').value || undefined,
+                    description: document.getElementById('update-level-desc').value || undefined
+                }, 'update-response')">Update Level</button>
+                <div class="response-container" id="update-response"></div>
+            </section>
+        </div>
+    </div>
+
+    <script src="../app.js"></script>
+</body>
+</html>
