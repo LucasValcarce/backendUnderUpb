@@ -31,8 +31,6 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = Question.builder()
                 .text(questionDto.getText())
                 .level(questionDto.getLevel())
-                .optionsJson(questionDto.getOptionsJson())
-                .answer(questionDto.getAnswer())
                 .description(questionDto.getDescription())
                 .build();
         Question savedQuestion = questionRepository.save(question);
@@ -65,12 +63,6 @@ public class QuestionServiceImpl implements QuestionService {
         }
         if (questionDto.getLevel() != null) {
             question.setLevel(questionDto.getLevel());
-        }
-        if (questionDto.getOptionsJson() != null) {
-            question.setOptionsJson(questionDto.getOptionsJson());
-        }
-        if (questionDto.getAnswer() != null) {
-            question.setAnswer(questionDto.getAnswer());
         }
         if (questionDto.getDescription() != null) {
             question.setDescription(questionDto.getDescription());
@@ -120,8 +112,6 @@ public class QuestionServiceImpl implements QuestionService {
                 .id(question.getId())
                 .text(question.getText())
                 .level(question.getLevel())
-                .optionsJson(question.getOptionsJson())
-                .answer(question.getAnswer())
                 .description(question.getDescription())
                 .createdDate(question.getCreatedDate())
                 .updatedDate(question.getUpdatedDate())

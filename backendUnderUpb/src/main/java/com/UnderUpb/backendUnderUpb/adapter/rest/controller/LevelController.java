@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/levels")
+@RequestMapping("/api/v1/levels")
 @RequiredArgsConstructor
 @Tag(name = "Level Management", description = "Endpoints for managing game levels")
 public class LevelController {

@@ -17,6 +17,7 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final LevelRepository levelRepository;
     private final QuestionRepository questionRepository;
+    private final AnswerRepository answerRepository;
     private final CharacterRepository characterRepository;
     private final EnemyRepository enemyRepository;
 
@@ -33,7 +34,6 @@ public class DataInitializer implements CommandLineRunner {
                     .lifePoints(10)
                     .score(0)
                     .currentLevel(1)
-                    .inventory("{}")
                     .build();
             userRepository.save(rootUser);
             log.info("Root user created successfully");
@@ -42,7 +42,6 @@ public class DataInitializer implements CommandLineRunner {
             Level level1 = Level.builder()
                     .name("Forest Temple")
                     .description("A mysterious forest filled with ancient ruins")
-                    .requiredXp(100)
                     .orderIndex(1)
                     .build();
             levelRepository.save(level1);
@@ -50,7 +49,6 @@ public class DataInitializer implements CommandLineRunner {
             Level level2 = Level.builder()
                     .name("Ice Castle")
                     .description("A frozen castle at the top of the mountains")
-                    .requiredXp(200)
                     .orderIndex(2)
                     .build();
             levelRepository.save(level2);
@@ -58,7 +56,6 @@ public class DataInitializer implements CommandLineRunner {
             Level level3 = Level.builder()
                     .name("Dark Dungeon")
                     .description("A treacherous dungeon filled with dark magic")
-                    .requiredXp(300)
                     .orderIndex(3)
                     .build();
             levelRepository.save(level3);
@@ -69,24 +66,18 @@ public class DataInitializer implements CommandLineRunner {
             CharacterEntity knight = CharacterEntity.builder()
                     .name("Knight")
                     .description("A brave knight with high defense")
-                    .abilities("{\"strength\": 8, \"defense\": 10, \"speed\": 5}")
-                    .requiredLevel(1)
                     .build();
             characterRepository.save(knight);
 
             CharacterEntity mage = CharacterEntity.builder()
                     .name("Mage")
                     .description("A powerful mage with high magic power")
-                    .abilities("{\"magic\": 10, \"wisdom\": 9, \"defense\": 4}")
-                    .requiredLevel(2)
                     .build();
             characterRepository.save(mage);
 
             CharacterEntity rogue = CharacterEntity.builder()
                     .name("Rogue")
                     .description("A swift rogue with high speed")
-                    .abilities("{\"speed\": 10, \"agility\": 9, \"strength\": 6}")
-                    .requiredLevel(3)
                     .build();
             characterRepository.save(rogue);
 
@@ -96,48 +87,203 @@ public class DataInitializer implements CommandLineRunner {
             Question q1 = Question.builder()
                     .text("What is the capital of France?")
                     .level(1)
-                    .optionsJson("[\"Paris\", \"London\", \"Berlin\", \"Madrid\"]")
-                    .answer("Paris")
                     .description("A basic geography question")
                     .build();
             questionRepository.save(q1);
+            
+            // Create answers for q1
+            Answers a1_1 = Answers.builder()
+                    .question(q1)
+                    .text("Paris")
+                    .isCorrect(true)
+                    .explanation("Paris is the capital and most populous city of France")
+                    .build();
+            answerRepository.save(a1_1);
+            
+            Answers a1_2 = Answers.builder()
+                    .question(q1)
+                    .text("London")
+                    .isCorrect(false)
+                    .explanation("London is the capital of the United Kingdom")
+                    .build();
+            answerRepository.save(a1_2);
+            
+            Answers a1_3 = Answers.builder()
+                    .question(q1)
+                    .text("Berlin")
+                    .isCorrect(false)
+                    .explanation("Berlin is the capital of Germany")
+                    .build();
+            answerRepository.save(a1_3);
+            
+            Answers a1_4 = Answers.builder()
+                    .question(q1)
+                    .text("Madrid")
+                    .isCorrect(false)
+                    .explanation("Madrid is the capital of Spain")
+                    .build();
+            answerRepository.save(a1_4);
 
             Question q2 = Question.builder()
                     .text("What is 2 + 2?")
                     .level(1)
-                    .optionsJson("[\"3\", \"4\", \"5\", \"6\"]")
-                    .answer("4")
                     .description("A simple math question")
                     .build();
             questionRepository.save(q2);
+            
+            // Create answers for q2
+            Answers a2_1 = Answers.builder()
+                    .question(q2)
+                    .text("3")
+                    .isCorrect(false)
+                    .explanation("2 + 2 is not 3")
+                    .build();
+            answerRepository.save(a2_1);
+            
+            Answers a2_2 = Answers.builder()
+                    .question(q2)
+                    .text("4")
+                    .isCorrect(true)
+                    .explanation("2 + 2 equals 4")
+                    .build();
+            answerRepository.save(a2_2);
+            
+            Answers a2_3 = Answers.builder()
+                    .question(q2)
+                    .text("5")
+                    .isCorrect(false)
+                    .explanation("2 + 2 is not 5")
+                    .build();
+            answerRepository.save(a2_3);
+            
+            Answers a2_4 = Answers.builder()
+                    .question(q2)
+                    .text("6")
+                    .isCorrect(false)
+                    .explanation("2 + 2 is not 6")
+                    .build();
+            answerRepository.save(a2_4);
 
             Question q3 = Question.builder()
                     .text("What is the largest planet in our solar system?")
                     .level(1)
-                    .optionsJson("[\"Mars\", \"Saturn\", \"Jupiter\", \"Neptune\"]")
-                    .answer("Jupiter")
                     .description("A space science question")
                     .build();
             questionRepository.save(q3);
+            
+            // Create answers for q3
+            Answers a3_1 = Answers.builder()
+                    .question(q3)
+                    .text("Mars")
+                    .isCorrect(false)
+                    .explanation("Mars is smaller than Jupiter")
+                    .build();
+            answerRepository.save(a3_1);
+            
+            Answers a3_2 = Answers.builder()
+                    .question(q3)
+                    .text("Saturn")
+                    .isCorrect(false)
+                    .explanation("Saturn is smaller than Jupiter")
+                    .build();
+            answerRepository.save(a3_2);
+            
+            Answers a3_3 = Answers.builder()
+                    .question(q3)
+                    .text("Jupiter")
+                    .isCorrect(true)
+                    .explanation("Jupiter is the largest planet in our solar system")
+                    .build();
+            answerRepository.save(a3_3);
+            
+            Answers a3_4 = Answers.builder()
+                    .question(q3)
+                    .text("Neptune")
+                    .isCorrect(false)
+                    .explanation("Neptune is smaller than Jupiter")
+                    .build();
+            answerRepository.save(a3_4);
 
             // Create sample questions for level 2
             Question q4 = Question.builder()
                     .text("What is the chemical symbol for Gold?")
                     .level(2)
-                    .optionsJson("[\"Go\", \"Gd\", \"Au\", \"Ag\"]")
-                    .answer("Au")
                     .description("A chemistry question")
                     .build();
             questionRepository.save(q4);
+            
+            // Create answers for q4
+            Answers a4_1 = Answers.builder()
+                    .question(q4)
+                    .text("Go")
+                    .isCorrect(false)
+                    .explanation("Go is not the symbol for Gold")
+                    .build();
+            answerRepository.save(a4_1);
+            
+            Answers a4_2 = Answers.builder()
+                    .question(q4)
+                    .text("Gd")
+                    .isCorrect(false)
+                    .explanation("Gd is the symbol for Gadolinium")
+                    .build();
+            answerRepository.save(a4_2);
+            
+            Answers a4_3 = Answers.builder()
+                    .question(q4)
+                    .text("Au")
+                    .isCorrect(true)
+                    .explanation("Au is the chemical symbol for Gold, from its Latin name 'Aurum'")
+                    .build();
+            answerRepository.save(a4_3);
+            
+            Answers a4_4 = Answers.builder()
+                    .question(q4)
+                    .text("Ag")
+                    .isCorrect(false)
+                    .explanation("Ag is the symbol for Silver")
+                    .build();
+            answerRepository.save(a4_4);
 
             Question q5 = Question.builder()
                     .text("Who wrote Romeo and Juliet?")
                     .level(2)
-                    .optionsJson("[\"Mark Twain\", \"William Shakespeare\", \"Jane Austen\", \"Charles Dickens\"]")
-                    .answer("William Shakespeare")
                     .description("A literature question")
                     .build();
             questionRepository.save(q5);
+            
+            // Create answers for q5
+            Answers a5_1 = Answers.builder()
+                    .question(q5)
+                    .text("Mark Twain")
+                    .isCorrect(false)
+                    .explanation("Mark Twain wrote other famous works like Tom Sawyer")
+                    .build();
+            answerRepository.save(a5_1);
+            
+            Answers a5_2 = Answers.builder()
+                    .question(q5)
+                    .text("William Shakespeare")
+                    .isCorrect(true)
+                    .explanation("William Shakespeare wrote Romeo and Juliet in the late 16th century")
+                    .build();
+            answerRepository.save(a5_2);
+            
+            Answers a5_3 = Answers.builder()
+                    .question(q5)
+                    .text("Jane Austen")
+                    .isCorrect(false)
+                    .explanation("Jane Austen wrote Pride and Prejudice and other novels")
+                    .build();
+            answerRepository.save(a5_3);
+            
+            Answers a5_4 = Answers.builder()
+                    .question(q5)
+                    .text("Charles Dickens")
+                    .isCorrect(false)
+                    .explanation("Charles Dickens wrote A Tale of Two Cities and other works")
+                    .build();
+            answerRepository.save(a5_4);
 
             log.info("Sample questions created");
 
@@ -147,7 +293,6 @@ public class DataInitializer implements CommandLineRunner {
                     .damage(5)
                     .totalLife(20)
                     .level(1)
-                    .behaviorJson("{\"type\": \"aggressive\", \"speed\": 6}")
                     .build();
             enemyRepository.save(goblin);
 
@@ -156,7 +301,6 @@ public class DataInitializer implements CommandLineRunner {
                     .damage(8)
                     .totalLife(30)
                     .level(2)
-                    .behaviorJson("{\"type\": \"tactical\", \"speed\": 5}")
                     .build();
             enemyRepository.save(skeleton);
 
@@ -165,7 +309,6 @@ public class DataInitializer implements CommandLineRunner {
                     .damage(15)
                     .totalLife(100)
                     .level(3)
-                    .behaviorJson("{\"type\": \"boss\", \"speed\": 4, \"spells\": [\"fireball\", \"tailswipe\"]}")
                     .build();
             enemyRepository.save(dragon);
 

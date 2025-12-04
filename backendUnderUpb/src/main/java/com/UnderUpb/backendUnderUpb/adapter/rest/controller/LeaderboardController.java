@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/leaderboard")
+@RequestMapping("/api/v1/leaderboard")
 @RequiredArgsConstructor
 @Tag(name = "Leaderboard Management", description = "Endpoints for managing game leaderboard")
 public class LeaderboardController {

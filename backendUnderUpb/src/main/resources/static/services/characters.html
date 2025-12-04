@@ -27,21 +27,9 @@
                     <label>Description</label>
                     <textarea id="create-char-desc" placeholder="Character description..."></textarea>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Abilities (JSON)</label>
-                        <textarea id="create-char-abilities" placeholder='{"strength": 10, "speed": 8}'></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Required Level</label>
-                        <input type="number" id="create-char-level" value="1" placeholder="e.g., 1">
-                    </div>
-                </div>
                 <button class="btn btn-primary" onclick="sendRequest('POST', '/api/characters', {
                     name: document.getElementById('create-char-name').value,
-                    description: document.getElementById('create-char-desc').value,
-                    abilities: document.getElementById('create-char-abilities').value,
-                    requiredLevel: parseInt(document.getElementById('create-char-level').value)
+                    description: document.getElementById('create-char-desc').value
                 }, 'create-response')">Create Character</button>
                 <div class="response-container" id="create-response"></div>
             </section>

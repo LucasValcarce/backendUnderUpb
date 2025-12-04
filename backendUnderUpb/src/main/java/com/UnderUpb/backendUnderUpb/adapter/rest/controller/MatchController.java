@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/match")
+@RequestMapping("/api/v1/match")
 @RequiredArgsConstructor
 @Tag(name = "Match Management", description = "Endpoints for managing game matches and scoring")
 public class MatchController {

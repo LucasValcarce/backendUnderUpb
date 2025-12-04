@@ -14,7 +14,6 @@ public class LevelResponseDto {
     private UUID id;
     private String name;
     private String description;
-    private Integer requiredXp;
     private Integer orderIndex;
     private Instant createdDate;
     private Instant updatedDate;

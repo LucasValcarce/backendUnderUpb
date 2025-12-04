@@ -28,12 +28,6 @@ public class Question extends AuditableEntity {
     @Column(name = "level")
     private Integer level;
 
-    @Column(name = "options", columnDefinition = "text")
-    private String optionsJson; // JSON with options and effects
-
-    @Column(name = "answer")
-    private String answer;
-
     @Column(name = "description", length = 1000)
     private String description;
 

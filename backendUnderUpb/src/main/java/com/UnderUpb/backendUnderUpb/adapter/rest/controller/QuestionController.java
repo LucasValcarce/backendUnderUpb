@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/questions")
+@RequestMapping("/api/v1/questions")
 @RequiredArgsConstructor
 @Tag(name = "Question Management", description = "Endpoints for managing quiz questions")
 public class QuestionController {

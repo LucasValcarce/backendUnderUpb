@@ -28,12 +28,6 @@ public class CharacterEntity extends AuditableEntity {
     @Column(name = "description", length = 1000)
     private String description;
 
-    @Column(name = "abilities", columnDefinition = "text")
-    private String abilities; // json array
-
-    @Column(name = "required_level")
-    private Integer requiredLevel;
-
     @PrePersist
     public void ensureId() {
         if (this.id == null) this.id = UUID.randomUUID();

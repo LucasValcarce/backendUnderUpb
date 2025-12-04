@@ -12,5 +12,4 @@ public class UserRequestDto {
     private Integer lifePoints;
     private Integer score;
     private Integer currentLevel;
-    private String inventory;
 }

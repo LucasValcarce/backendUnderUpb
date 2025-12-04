@@ -30,7 +30,7 @@ public class DecisionServiceImpl implements DecisionService {
         }
         Decision decision = Decision.builder()
                 .questionId(decisionDto.getQuestionId())
-                .payloadJson(decisionDto.getPayloadJson())
+                .decisionContent(decisionDto.getDecisionContent())
                 .description(decisionDto.getDescription())
                 .build();
         Decision savedDecision = decisionRepository.save(decision);
@@ -61,8 +61,8 @@ public class DecisionServiceImpl implements DecisionService {
         if (decisionDto.getQuestionId() != null) {
             decision.setQuestionId(decisionDto.getQuestionId());
         }
-        if (decisionDto.getPayloadJson() != null) {
-            decision.setPayloadJson(decisionDto.getPayloadJson());
+        if (decisionDto.getDecisionContent() != null) {
+            decision.setDecisionContent(decisionDto.getDecisionContent());
         }
         if (decisionDto.getDescription() != null) {
             decision.setDescription(decisionDto.getDescription());
@@ -94,7 +94,7 @@ public class DecisionServiceImpl implements DecisionService {
         return DecisionResponseDto.builder()
                 .id(decision.getId())
                 .questionId(decision.getQuestionId())
-                .payloadJson(decision.getPayloadJson())
+                .decisionContent(decision.getDecisionContent())
                 .description(decision.getDescription())
                 .createdDate(decision.getCreatedDate())
                 .updatedDate(decision.getUpdatedDate())

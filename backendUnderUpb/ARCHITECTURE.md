@@ -10,14 +10,14 @@ Ubicación: `com.artemisia_corp.artemisia.entity.*`
 
 Entidades con JPA:
 - `AuditableEntity` (base con createdDate, updatedDate)
-- `User` → tabla `players` (UUID id, name, lifePoints, score, currentLevel, inventory)
-- `Level` → tabla `levels` (name, description, requiredXp, orderIndex)
-- `CharacterEntity` → tabla `characters` (name, description, abilities, requiredLevel)
+- `User` → tabla `players` (UUID id, name, lifePoints, score, currentLevel)
+- `Level` → tabla `levels` (name, description, orderIndex)
+- `CharacterEntity` → tabla `characters` (name, description)
 - `Question` → tabla `questions` (text, level, optionsJson, answer, description)
 - `SaveGame` → tabla `saves` (userId, stateJson, version)
 - `LeaderboardEntry` → tabla `leaderboard` (userId, score, createdAt)
-- `Decision` → tabla `decisions` (questionId, payloadJson, description)
-- `Enemy` → tabla `enemies` (name, damage, totalLife, level, behaviorJson)
+- `Decision` → tabla `decisions` (questionId, decisionContent, description)
+- `Enemy` → tabla `enemies` (name, damage, totalLife, level)
 
 #### 2. **Repository Layer** (Data Access)
 Ubicación: `com.artemisia_corp.artemisia.repository.*`
@@ -224,8 +224,7 @@ Acceso a Swagger: `http://localhost:8080/swagger-ui.html`
   "name": "Player 1",
   "lifePoints": 3,
   "score": 0,
-  "currentLevel": 1,
-  "inventory": "{}"
+  "currentLevel": 1
 }
 ```
 
@@ -237,7 +236,6 @@ Acceso a Swagger: `http://localhost:8080/swagger-ui.html`
   "lifePoints": 3,
   "score": 0,
   "currentLevel": 1,
-  "inventory": "{}",
   "createdDate": "2025-11-28T10:00:00Z",
   "updatedDate": "2025-11-28T10:00:00Z"
 }

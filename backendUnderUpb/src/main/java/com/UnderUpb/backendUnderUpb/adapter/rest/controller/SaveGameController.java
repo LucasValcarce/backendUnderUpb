@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/save")
+@RequestMapping("/api/v1/save")
 @RequiredArgsConstructor
 @Tag(name = "Save Game Management", description = "Endpoints for managing game saves")
 public class SaveGameController {

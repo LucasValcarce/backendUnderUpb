@@ -10,7 +10,5 @@ import lombok.*;
 public class QuestionRequestDto {
     private String text;
     private Integer level;
-    private String optionsJson;
-    private String answer;
     private String description;
 }

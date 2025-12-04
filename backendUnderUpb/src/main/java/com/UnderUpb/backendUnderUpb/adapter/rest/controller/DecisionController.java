@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/decisions")
+@RequestMapping("/api/v1/decisions")
 @RequiredArgsConstructor
 @Tag(name = "Decision Management", description = "Endpoints for managing game decisions and dialogue trees")
 public class DecisionController {

@@ -30,8 +30,6 @@ public class CharacterServiceImpl implements CharacterService {
         CharacterEntity character = CharacterEntity.builder()
                 .name(characterDto.getName())
                 .description(characterDto.getDescription())
-                .abilities(characterDto.getAbilities())
-                .requiredLevel(characterDto.getRequiredLevel())
                 .build();
         CharacterEntity savedCharacter = characterRepository.save(character);
         log.info("Character created with ID: {}", savedCharacter.getId());
@@ -64,12 +62,6 @@ public class CharacterServiceImpl implements CharacterService {
         if (characterDto.getDescription() != null) {
             character.setDescription(characterDto.getDescription());
         }
-        if (characterDto.getAbilities() != null) {
-            character.setAbilities(characterDto.getAbilities());
-        }
-        if (characterDto.getRequiredLevel() != null) {
-            character.setRequiredLevel(characterDto.getRequiredLevel());
-        }
         CharacterEntity updatedCharacter = characterRepository.save(character);
         log.info("Character updated with ID: {}", characterId);
         return toResponseDto(updatedCharacter);
@@ -90,8 +82,6 @@ public class CharacterServiceImpl implements CharacterService {
                 .id(character.getId())
                 .name(character.getName())
                 .description(character.getDescription())
-                .abilities(character.getAbilities())
-                .requiredLevel(character.getRequiredLevel())
                 .createdDate(character.getCreatedDate())
                 .updatedDate(character.getUpdatedDate())
                 .build();

@@ -13,7 +13,7 @@ import java.util.UUID;
 public class DecisionResponseDto {
     private UUID id;
     private UUID questionId;
-    private String payloadJson;
+    private String decisionContent;
     private String description;
     private Instant createdDate;
     private Instant updatedDate;

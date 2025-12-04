@@ -33,7 +33,7 @@
                 </div>
                 <button class="btn btn-primary" onclick="sendRequest('POST', '/api/decisions', {
                     questionId: document.getElementById('create-decision-question').value,
-                    payloadJson: document.getElementById('create-decision-payload').value,
+                    decisionContent: document.getElementById('create-decision-payload').value,
                     description: document.getElementById('create-decision-desc').value
                 }, 'create-response')">Create Decision</button>
                 <div class="response-container" id="create-response"></div>

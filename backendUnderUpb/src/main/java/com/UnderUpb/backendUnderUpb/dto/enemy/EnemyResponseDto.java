@@ -16,7 +16,6 @@ public class EnemyResponseDto {
     private Integer damage;
     private Integer totalLife;
     private Integer level;
-    private String behaviorJson;
     private Instant createdDate;
     private Instant updatedDate;
 }

@@ -10,6 +10,5 @@ import lombok.*;
 public class LevelRequestDto {
     private String name;
     private String description;
-    private Integer requiredXp;
     private Integer orderIndex;
 }

@@ -26,7 +26,7 @@ public class Decision extends AuditableEntity {
     private UUID questionId;
 
     @Column(name = "payload", columnDefinition = "text")
-    private String payloadJson; // tree node or reference to assets/dialogos
+    private String decisionContent; // JSON with dialogue tree node or reference to assets
 
     @Column(name = "description", length = 1000)
     private String description;

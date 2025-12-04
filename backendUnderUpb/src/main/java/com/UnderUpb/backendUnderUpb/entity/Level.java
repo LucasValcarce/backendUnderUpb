@@ -28,9 +28,6 @@ public class Level extends AuditableEntity {
     @Column(name = "description", length = 1000)
     private String description;
 
-    @Column(name = "required_xp")
-    private Integer requiredXp;
-
     @Column(name = "order_index")
     private Integer orderIndex;
 

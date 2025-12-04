@@ -9,6 +9,7 @@ import lombok.*;
 
 import java.util.UUID;
 
+// TODO delete enemy
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -33,9 +34,6 @@ public class Enemy extends AuditableEntity {
 
     @Column(name = "level")
     private Integer level;
-
-    @Column(name = "behavior", columnDefinition = "text")
-    private String behaviorJson;
 
     @PrePersist
     public void ensureId() {

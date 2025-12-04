@@ -16,7 +16,6 @@ public class UserResponseDto {
     private Integer lifePoints;
     private Integer score;
     private Integer currentLevel;
-    private String inventory;
     private Instant createdDate;
     private Instant updatedDate;
 }

@@ -14,8 +14,6 @@ public class QuestionResponseDto {
     private UUID id;
     private String text;
     private Integer level;
-    private String optionsJson;
-    private String answer;
     private String description;
     private Instant createdDate;
     private Instant updatedDate;

@@ -12,5 +12,4 @@ public class EnemyRequestDto {
     private Integer damage;
     private Integer totalLife;
     private Integer level;
-    private String behaviorJson;
 }

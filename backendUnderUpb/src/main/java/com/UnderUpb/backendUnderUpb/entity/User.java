@@ -34,9 +34,6 @@ public class User extends AuditableEntity {
     @Column(name = "current_level")
     private Integer currentLevel;
 
-    @Column(name = "inventory", columnDefinition = "text")
-    private String inventory; // json
-
     @PrePersist
     public void ensureId() {
         if (this.id == null) this.id = UUID.randomUUID();

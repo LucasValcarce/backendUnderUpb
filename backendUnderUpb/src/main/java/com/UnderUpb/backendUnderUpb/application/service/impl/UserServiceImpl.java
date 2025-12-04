@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
                 .lifePoints(userDto.getLifePoints() != null ? userDto.getLifePoints() : 3)
                 .score(userDto.getScore() != null ? userDto.getScore() : 0)
                 .currentLevel(userDto.getCurrentLevel() != null ? userDto.getCurrentLevel() : 1)
-                .inventory(userDto.getInventory())
                 .build();
         User savedUser = userRepository.save(user);
         log.info("User created with ID: {}", savedUser.getId());
@@ -71,9 +70,6 @@ public class UserServiceImpl implements UserService {
         if (userDto.getCurrentLevel() != null) {
             user.setCurrentLevel(userDto.getCurrentLevel());
         }
-        if (userDto.getInventory() != null) {
-            user.setInventory(userDto.getInventory());
-        }
         User updatedUser = userRepository.save(user);
         log.info("User updated with ID: {}", userId);
         return toResponseDto(updatedUser);
@@ -96,7 +92,6 @@ public class UserServiceImpl implements UserService {
                 .lifePoints(user.getLifePoints())
                 .score(user.getScore())
                 .currentLevel(user.getCurrentLevel())
-                .inventory(user.getInventory())
                 .createdDate(user.getCreatedDate())
                 .updatedDate(user.getUpdatedDate())
                 .build();

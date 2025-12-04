@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/characters")
+@RequestMapping("/api/v1/characters")
 @RequiredArgsConstructor
 @Tag(name = "Character Management", description = "Endpoints for managing game characters")
 public class CharacterController {

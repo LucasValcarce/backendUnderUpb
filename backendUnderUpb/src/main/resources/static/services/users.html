@@ -40,17 +40,12 @@
                         <label>Current Level</label>
                         <input type="number" id="create-user-level" value="1" placeholder="e.g., 1">
                     </div>
-                    <div class="form-group">
-                        <label>Inventory (JSON)</label>
-                        <input type="text" id="create-user-inventory" placeholder="e.g., {}" value="{}">
-                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="sendRequest('POST', '/api/users', {
                     name: document.getElementById('create-user-name').value,
                     lifePoints: parseInt(document.getElementById('create-user-life').value),
                     score: parseInt(document.getElementById('create-user-score').value),
-                    currentLevel: parseInt(document.getElementById('create-user-level').value),
-                    inventory: document.getElementById('create-user-inventory').value
+                    currentLevel: parseInt(document.getElementById('create-user-level').value)
                 }, 'create-response')">Create User</button>
                 <div class="response-container" id="create-response"></div>
             </section>

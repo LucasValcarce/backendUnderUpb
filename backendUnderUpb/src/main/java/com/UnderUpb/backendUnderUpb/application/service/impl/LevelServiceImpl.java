@@ -33,7 +33,6 @@ public class LevelServiceImpl implements LevelService {
         Level level = Level.builder()
                 .name(levelDto.getName())
                 .description(levelDto.getDescription())
-                .requiredXp(levelDto.getRequiredXp())
                 .orderIndex(levelDto.getOrderIndex())
                 .build();
         Level savedLevel = levelRepository.save(level);
@@ -66,9 +65,6 @@ public class LevelServiceImpl implements LevelService {
         }
         if (levelDto.getDescription() != null) {
             level.setDescription(levelDto.getDescription());
-        }
-        if (levelDto.getRequiredXp() != null) {
-            level.setRequiredXp(levelDto.getRequiredXp());
         }
         if (levelDto.getOrderIndex() != null) {
             level.setOrderIndex(levelDto.getOrderIndex());
@@ -104,7 +100,6 @@ public class LevelServiceImpl implements LevelService {
                 .id(level.getId())
                 .name(level.getName())
                 .description(level.getDescription())
-                .requiredXp(level.getRequiredXp())
                 .orderIndex(level.getOrderIndex())
                 .createdDate(level.getCreatedDate())
                 .updatedDate(level.getUpdatedDate())

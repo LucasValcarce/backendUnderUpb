@@ -33,7 +33,6 @@ public class EnemyServiceImpl implements EnemyService {
                 .damage(enemyDto.getDamage())
                 .totalLife(enemyDto.getTotalLife())
                 .level(enemyDto.getLevel())
-                .behaviorJson(enemyDto.getBehaviorJson())
                 .build();
         Enemy savedEnemy = enemyRepository.save(enemy);
         log.info("Enemy created with ID: {}", savedEnemy.getId());
@@ -72,9 +71,6 @@ public class EnemyServiceImpl implements EnemyService {
         if (enemyDto.getLevel() != null) {
             enemy.setLevel(enemyDto.getLevel());
         }
-        if (enemyDto.getBehaviorJson() != null) {
-            enemy.setBehaviorJson(enemyDto.getBehaviorJson());
-        }
         Enemy updatedEnemy = enemyRepository.save(enemy);
         log.info("Enemy updated with ID: {}", enemyId);
         return toResponseDto(updatedEnemy);
@@ -105,7 +101,6 @@ public class EnemyServiceImpl implements EnemyService {
                 .damage(enemy.getDamage())
                 .totalLife(enemy.getTotalLife())
                 .level(enemy.getLevel())
-                .behaviorJson(enemy.getBehaviorJson())
                 .createdDate(enemy.getCreatedDate())
                 .updatedDate(enemy.getUpdatedDate())
                 .build();

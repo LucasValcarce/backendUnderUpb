@@ -10,6 +10,4 @@ import lombok.*;
 public class CharacterRequestDto {
     private String name;
     private String description;
-    private String abilities;
-    private Integer requiredLevel;
 }

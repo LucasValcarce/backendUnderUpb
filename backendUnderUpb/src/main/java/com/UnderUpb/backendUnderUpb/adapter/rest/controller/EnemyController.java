@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/enemies")
+@RequestMapping("/api/v1/enemies")
 @RequiredArgsConstructor
 @Tag(name = "Enemy Management", description = "Endpoints for managing game enemies and bosses")
 public class EnemyController {

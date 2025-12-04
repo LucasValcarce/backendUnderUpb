@@ -38,17 +38,12 @@
                         <label>Level</label>
                         <input type="number" id="create-enemy-level" value="1" placeholder="e.g., 1">
                     </div>
-                    <div class="form-group">
-                        <label>Behavior (JSON)</label>
-                        <input type="text" id="create-enemy-behavior" placeholder='{"type": "aggressive"}'>
-                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="sendRequest('POST', '/api/enemies', {
                     name: document.getElementById('create-enemy-name').value,
                     damage: parseInt(document.getElementById('create-enemy-damage').value),
                     totalLife: parseInt(document.getElementById('create-enemy-life').value),
-                    level: parseInt(document.getElementById('create-enemy-level').value),
-                    behaviorJson: document.getElementById('create-enemy-behavior').value
+                    level: parseInt(document.getElementById('create-enemy-level').value)
                 }, 'create-response')">Create Enemy</button>
                 <div class="response-container" id="create-response"></div>
             </section>

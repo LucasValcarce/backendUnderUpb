@@ -11,6 +11,6 @@ import java.util.UUID;
 @Setter
 public class DecisionRequestDto {
     private UUID questionId;
-    private String payloadJson;
+    private String decisionContent;
     private String description;
 }
