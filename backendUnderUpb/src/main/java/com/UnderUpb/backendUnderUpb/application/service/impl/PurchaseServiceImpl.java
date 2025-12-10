@@ -44,7 +44,6 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .orElseGet(() -> {
                     Product p = Product.builder()
                             .name(purchaseDto.getItemName())
-                            .sku("SKU-" + UUID.randomUUID())
                             .description(purchaseDto.getDescription())
                             .price(purchaseDto.getAmount())
                             .currency(purchaseDto.getCurrency())

@@ -13,7 +13,6 @@ import java.util.UUID;
 public class PurchasedItemDto {
     private UUID purchaseId;
     private UUID productId;
-    private String sku;
     private String name;
     private String type;
     private Integer quantity;

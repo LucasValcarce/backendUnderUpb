@@ -22,9 +22,6 @@ public class Product extends AuditableEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "sku", length = 120, nullable = false, unique = true)
-    private String sku;
-
     @Column(name = "name", length = 200, nullable = false)
     private String name;
 
