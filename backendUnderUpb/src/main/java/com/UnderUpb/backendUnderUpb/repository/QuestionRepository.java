@@ -11,8 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, UUID> {
-    List<Question> findByLevel(Integer level);
-
     @Query("SELECT q FROM Question q WHERE q.level.orderIndex = :levelNumber")
     List<Question> findByLevelNumber(@Param("levelNumber") Integer levelNumber);
 
