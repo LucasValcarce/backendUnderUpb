@@ -1,8 +1,10 @@
 package com.UnderUpb.backendUnderUpb.dto.level;
 
+import com.UnderUpb.backendUnderUpb.dto.question.QuestionResponseDto;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -15,6 +17,7 @@ public class LevelResponseDto {
     private String name;
     private String description;
     private Integer orderIndex;
+    private List<QuestionResponseDto> questions;
     private Instant createdDate;
     private Instant updatedDate;
 }

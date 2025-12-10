@@ -37,7 +37,8 @@ public class UserServiceImpl implements UserService {
         }
         User user = User.builder()
                 .name(userDto.getName())
-                .lifePoints(userDto.getLifePoints() != null ? userDto.getLifePoints() : 3)
+                .lifePoints(userDto.getLifePoints() != null ? userDto.getLifePoints() : 100)
+                .maxLifePoints(userDto.getLifePoints() != null ? userDto.getLifePoints() : 100)
                 .score(userDto.getScore() != null ? userDto.getScore() : 0)
                 .currentLevel(userDto.getCurrentLevel() != null ? userDto.getCurrentLevel() : 1)
                 .build();
@@ -126,6 +127,7 @@ public class UserServiceImpl implements UserService {
             .id(user.getId())
             .name(user.getName())
             .lifePoints(user.getLifePoints())
+            .maxLifePoints(user.getMaxLifePoints())
             .score(user.getScore())
             .currentLevel(user.getCurrentLevel())
             .createdDate(user.getCreatedDate())

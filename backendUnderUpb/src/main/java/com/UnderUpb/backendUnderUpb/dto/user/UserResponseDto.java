@@ -19,6 +19,7 @@ public class UserResponseDto {
     private Integer lifePoints;
     private Integer score;
     private Integer currentLevel;
+    private Integer maxLifePoints;
     private Instant createdDate;
     private Instant updatedDate;
     private List<PurchasedItemDto> purchases;

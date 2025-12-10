@@ -57,6 +57,14 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.getRandomQuestionsByLevel(level, count));
     }
 
+    @GetMapping("/levelId/{levelId}")
+    @Operation(summary = "Get questions by level ID", description = "Retrieves questions for a specific level by ID")
+    @ApiResponse(responseCode = "200", description = "Questions retrieved successfully")
+    public ResponseEntity<List<QuestionResponseDto>> getQuestionsByLevelId(
+            @PathVariable UUID levelId) {
+        return ResponseEntity.ok(questionService.getQuestionsByLevelId(levelId));
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Update question", description = "Updates an existing question")
     @ApiResponse(responseCode = "200", description = "Question updated successfully")

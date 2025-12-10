@@ -1,12 +1,10 @@
 package com.UnderUpb.backendUnderUpb.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -30,6 +28,10 @@ public class Level extends AuditableEntity {
 
     @Column(name = "order_index")
     private Integer orderIndex;
+
+    @OneToMany(mappedBy = "level", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Question> questions = new ArrayList<>();
 
     @PrePersist
     public void ensureId() {

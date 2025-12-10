@@ -15,5 +15,6 @@ public interface QuestionService {
     QuestionResponseDto updateQuestion(UUID questionId, QuestionRequestDto questionDto);
     void deleteQuestion(UUID questionId);
     List<QuestionResponseDto> getQuestionsByLevel(Integer level);
+    List<QuestionResponseDto> getQuestionsByLevelId(UUID levelId);
     List<QuestionResponseDto> getRandomQuestionsByLevel(Integer level, int count);
 }

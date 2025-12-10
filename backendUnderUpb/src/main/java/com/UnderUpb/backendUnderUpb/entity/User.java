@@ -28,6 +28,9 @@ public class User extends AuditableEntity {
     @Column(name = "life_points")
     private Integer lifePoints;
 
+    @Column(name = "max_life_points")
+    private Integer maxLifePoints;
+
     @Column(name = "score")
     private Integer score;
 
@@ -37,7 +40,8 @@ public class User extends AuditableEntity {
     @PrePersist
     public void ensureId() {
         if (this.id == null) this.id = UUID.randomUUID();
-        if (this.lifePoints == null) this.lifePoints = 3;
+        if (this.lifePoints == null) this.lifePoints = 100;
+        if (this.maxLifePoints == null) this.maxLifePoints = 100;
         if (this.score == null) this.score = 0;
         if (this.currentLevel == null) this.currentLevel = 1;
     }

@@ -1,12 +1,10 @@
 package com.UnderUpb.backendUnderUpb.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -25,11 +23,16 @@ public class Question extends AuditableEntity {
     @Column(name = "text", length = 1500, nullable = false)
     private String text;
 
-    @Column(name = "level")
-    private Integer level;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "level_id", nullable = false)
+    private Level level;
 
     @Column(name = "description", length = 1000)
     private String description;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<Answers> answers = new ArrayList<>();
 
     @PrePersist
     public void ensureId() {

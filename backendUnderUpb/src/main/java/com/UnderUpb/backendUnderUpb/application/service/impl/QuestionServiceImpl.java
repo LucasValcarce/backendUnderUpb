@@ -3,7 +3,9 @@ package com.UnderUpb.backendUnderUpb.application.service.impl;
 import com.UnderUpb.backendUnderUpb.application.service.QuestionService;
 import com.UnderUpb.backendUnderUpb.dto.question.QuestionRequestDto;
 import com.UnderUpb.backendUnderUpb.dto.question.QuestionResponseDto;
+import com.UnderUpb.backendUnderUpb.entity.Answers;
 import com.UnderUpb.backendUnderUpb.entity.Question;
+import com.UnderUpb.backendUnderUpb.repository.LevelRepository;
 import com.UnderUpb.backendUnderUpb.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,6 +24,7 @@ import java.util.UUID;
 public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
+    private final LevelRepository levelRepository;
 
     @Override
     @Transactional
@@ -28,11 +32,28 @@ public class QuestionServiceImpl implements QuestionService {
         if (questionDto == null || questionDto.getText() == null) {
             throw new IllegalArgumentException("Question data cannot be null");
         }
+        
+        var level = levelRepository.findById(questionDto.getLevelId())
+                .orElseThrow(() -> new IllegalArgumentException("Level not found with ID: " + questionDto.getLevelId()));
+        
         Question question = Question.builder()
                 .text(questionDto.getText())
-                .level(questionDto.getLevel())
+                .level(level)
                 .description(questionDto.getDescription())
                 .build();
+        
+        // Agregar respuestas si existen
+        if (questionDto.getAnswers() != null && !questionDto.getAnswers().isEmpty()) {
+            question.setAnswers(questionDto.getAnswers().stream()
+                    .map(answerDto -> Answers.builder()
+                            .question(question)
+                            .text(answerDto.getText())
+                            .isCorrect(answerDto.getIsCorrect())
+                            .explanation(answerDto.getExplanation())
+                            .build())
+                    .collect(Collectors.toList()));
+        }
+        
         Question savedQuestion = questionRepository.save(question);
         log.info("Question created with ID: {}", savedQuestion.getId());
         return toResponseDto(savedQuestion);
@@ -61,8 +82,10 @@ public class QuestionServiceImpl implements QuestionService {
         if (questionDto.getText() != null) {
             question.setText(questionDto.getText());
         }
-        if (questionDto.getLevel() != null) {
-            question.setLevel(questionDto.getLevel());
+        if (questionDto.getLevelId() != null) {
+            var level = levelRepository.findById(questionDto.getLevelId())
+                    .orElseThrow(() -> new IllegalArgumentException("Level not found with ID: " + questionDto.getLevelId()));
+            question.setLevel(level);
         }
         if (questionDto.getDescription() != null) {
             question.setDescription(questionDto.getDescription());
@@ -85,7 +108,15 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional(readOnly = true)
     public List<QuestionResponseDto> getQuestionsByLevel(Integer level) {
-        return questionRepository.findByLevel(level).stream()
+        return questionRepository.findByLevelNumber(level).stream()
+                .map(this::toResponseDto)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuestionResponseDto> getQuestionsByLevelId(UUID levelId) {
+        return questionRepository.findByLevelId(levelId).stream()
                 .map(this::toResponseDto)
                 .toList();
     }
@@ -93,7 +124,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     @Transactional(readOnly = true)
     public List<QuestionResponseDto> getRandomQuestionsByLevel(Integer level, int count) {
-        List<Question> questions = questionRepository.findByLevel(level);
+        List<Question> questions = questionRepository.findByLevelNumber(level);
         if (questions.isEmpty()) {
             return List.of();
         }
@@ -108,11 +139,21 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     private QuestionResponseDto toResponseDto(Question question) {
+        List<QuestionResponseDto.AnswerDto> answers = question.getAnswers().stream()
+                .map(answer -> QuestionResponseDto.AnswerDto.builder()
+                        .id(answer.getId())
+                        .text(answer.getText())
+                        .isCorrect(answer.getIsCorrect())
+                        .explanation(answer.getExplanation())
+                        .build())
+                .collect(Collectors.toList());
+
         return QuestionResponseDto.builder()
                 .id(question.getId())
                 .text(question.getText())
-                .level(question.getLevel())
+                .levelId(question.getLevel() != null ? question.getLevel().getId() : null)
                 .description(question.getDescription())
+                .answers(answers)
                 .createdDate(question.getCreatedDate())
                 .updatedDate(question.getUpdatedDate())
                 .build();
