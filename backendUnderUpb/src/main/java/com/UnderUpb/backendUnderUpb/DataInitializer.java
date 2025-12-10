@@ -19,7 +19,6 @@ public class DataInitializer implements CommandLineRunner {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final CharacterRepository characterRepository;
-    private final EnemyRepository enemyRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -286,31 +285,6 @@ public class DataInitializer implements CommandLineRunner {
             answerRepository.save(a5_4);
 
             log.info("Sample questions created");
-
-            // Create sample enemies
-            Enemy goblin = Enemy.builder()
-                    .name("Goblin")
-                    .damage(5)
-                    .totalLife(20)
-                    .level(1)
-                    .build();
-            enemyRepository.save(goblin);
-
-            Enemy skeleton = Enemy.builder()
-                    .name("Skeleton Knight")
-                    .damage(8)
-                    .totalLife(30)
-                    .level(2)
-                    .build();
-            enemyRepository.save(skeleton);
-
-            Enemy dragon = Enemy.builder()
-                    .name("Fire Dragon")
-                    .damage(15)
-                    .totalLife(100)
-                    .level(3)
-                    .build();
-            enemyRepository.save(dragon);
 
             log.info("Sample enemies created");
             log.info("Data initialization completed successfully!");

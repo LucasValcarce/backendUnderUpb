@@ -19,7 +19,7 @@
             <section class="endpoint">
                 <h2>Create Question</h2>
                 <div class="method-badge">POST</div>
-                <div class="endpoint-url">/api/questions</div>
+                <div class="endpoint-url">/api/v1/questions</div>
                 
                 <div class="form-group">
                     <label>Question Text</label>
@@ -30,24 +30,14 @@
                         <label>Level</label>
                         <input type="number" id="create-q-level" value="1" placeholder="e.g., 1">
                     </div>
-                    <div class="form-group">
-                        <label>Correct Answer</label>
-                        <input type="text" id="create-q-answer" placeholder="e.g., Paris">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Options (JSON array)</label>
-                    <textarea id="create-q-options" placeholder='["Paris", "London", "Berlin", "Madrid"]'></textarea>
                 </div>
                 <div class="form-group">
                     <label>Description</label>
                     <textarea id="create-q-desc" placeholder="Question description..."></textarea>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/questions', {
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/v1/questions', {
                     text: document.getElementById('create-q-text').value,
                     level: parseInt(document.getElementById('create-q-level').value),
-                    answer: document.getElementById('create-q-answer').value,
-                    optionsJson: document.getElementById('create-q-options').value,
                     description: document.getElementById('create-q-desc').value
                 }, 'create-response')">Create Question</button>
                 <div class="response-container" id="create-response"></div>
@@ -57,7 +47,7 @@
             <section class="endpoint">
                 <h2>List Questions</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/questions</div>
+                <div class="endpoint-url">/api/v1/questions</div>
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -69,7 +59,7 @@
                         <input type="number" id="questions-size" value="10" placeholder="10">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/questions?page=${document.getElementById('questions-page').value}&size=${document.getElementById('questions-size').value}`, null, 'list-response')">Fetch Questions</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/questions?page=${document.getElementById('questions-page').value}&size=${document.getElementById('questions-size').value}`, null, 'list-response')">Fetch Questions</button>
                 <div class="response-container" id="list-response"></div>
             </section>
 
@@ -77,7 +67,7 @@
             <section class="endpoint">
                 <h2>Questions by Level (with Random Selection)</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/questions/level/{level}?count=N</div>
+                <div class="endpoint-url">/api/v1/questions/level/{level}?count=N</div>
                 <p class="info-text">Leave count empty to get all questions, or specify a number for random selection</p>
                 
                 <div class="form-row">
@@ -90,7 +80,7 @@
                         <input type="number" id="q-by-level-count" placeholder="e.g., 5 (leave empty for all)">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/questions/level/${document.getElementById('q-by-level').value}${document.getElementById('q-by-level-count').value ? '?count=' + document.getElementById('q-by-level-count').value : ''}`, null, 'level-response')">Fetch Questions</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/questions/level/${document.getElementById('q-by-level').value}${document.getElementById('q-by-level-count').value ? '?count=' + document.getElementById('q-by-level-count').value : ''}`, null, 'level-response')">Fetch Questions</button>
                 <div class="response-container" id="level-response"></div>
             </section>
 
@@ -98,13 +88,13 @@
             <section class="endpoint">
                 <h2>Get Question by ID</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/questions/{id}</div>
+                <div class="endpoint-url">/api/v1/questions/{id}</div>
                 
                 <div class="form-group">
                     <label>Question ID (UUID)</label>
                     <input type="text" id="get-question-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/questions/${document.getElementById('get-question-id').value}`, null, 'get-response')">Fetch Question</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/questions/${document.getElementById('get-question-id').value}`, null, 'get-response')">Fetch Question</button>
                 <div class="response-container" id="get-response"></div>
             </section>
 
@@ -112,13 +102,13 @@
             <section class="endpoint">
                 <h2>Delete Question</h2>
                 <div class="method-badge delete">DELETE</div>
-                <div class="endpoint-url">/api/questions/{id}</div>
+                <div class="endpoint-url">/api/v1/questions/{id}</div>
                 
                 <div class="form-group">
                     <label>Question ID (UUID)</label>
                     <input type="text" id="delete-question-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
                 </div>
-                <button class="btn btn-danger" onclick="sendRequest('DELETE', `/api/questions/${document.getElementById('delete-question-id').value}`, null, 'delete-response')">Delete Question</button>
+                <button class="btn btn-danger" onclick="sendRequest('DELETE', `/api/v1/questions/${document.getElementById('delete-question-id').value}`, null, 'delete-response')">Delete Question</button>
                 <div class="response-container" id="delete-response"></div>
             </section>
         </div>

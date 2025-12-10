@@ -5,6 +5,12 @@ import com.UnderUpb.backendUnderUpb.dto.user.UserRequestDto;
 import com.UnderUpb.backendUnderUpb.dto.user.UserResponseDto;
 import com.UnderUpb.backendUnderUpb.entity.User;
 import com.UnderUpb.backendUnderUpb.repository.UserRepository;
+import com.UnderUpb.backendUnderUpb.repository.PurchaseRepository;
+import com.UnderUpb.backendUnderUpb.repository.OwnedProductRepository;
+import com.UnderUpb.backendUnderUpb.dto.owned.OwnedProductDto;
+import com.UnderUpb.backendUnderUpb.dto.purchase.PurchasedItemDto;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,6 +26,8 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PurchaseRepository purchaseRepository;
+    private final OwnedProductRepository ownedProductRepository;
 
     @Override
     @Transactional
@@ -86,14 +94,46 @@ public class UserServiceImpl implements UserService {
     }
 
     private UserResponseDto toResponseDto(User user) {
+        List<PurchasedItemDto> purchases = purchaseRepository.findByUserId(user.getId()).stream()
+            .map(p -> PurchasedItemDto.builder()
+                .purchaseId(p.getId())
+                .productId(p.getProduct() != null ? p.getProduct().getId() : null)
+                .sku(p.getProduct() != null ? p.getProduct().getSku() : null)
+                .name(p.getProduct() != null ? p.getProduct().getName() : null)
+                .type(p.getProduct() != null ? p.getProduct().getType() : null)
+                .quantity(p.getQuantity())
+                .price(p.getPrice())
+                .currency(p.getCurrency())
+                .status(p.getStatus() != null ? p.getStatus().name() : null)
+                .purchasedAt(p.getPurchasedAt())
+                .build())
+            .collect(Collectors.toList());
+
+        List<OwnedProductDto> owned = ownedProductRepository.findByUserId(user.getId()).stream()
+            .map(o -> OwnedProductDto.builder()
+                .ownedProductId(o.getId())
+                .productId(o.getProduct() != null ? o.getProduct().getId() : null)
+                .sku(o.getProduct() != null ? o.getProduct().getSku() : null)
+                .name(o.getProduct() != null ? o.getProduct().getName() : null)
+                .type(o.getProduct() != null ? o.getProduct().getType() : null)
+                .description(o.getProduct() != null ? o.getProduct().getDescription() : null)
+                .isActive(o.getIsActive())
+                .equipped(o.getEquipped())
+                .purchaseId(o.getPurchase() != null ? o.getPurchase().getId() : null)
+                .acquiredAt(o.getCreatedDate())
+                .build())
+            .collect(Collectors.toList());
+
         return UserResponseDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .lifePoints(user.getLifePoints())
-                .score(user.getScore())
-                .currentLevel(user.getCurrentLevel())
-                .createdDate(user.getCreatedDate())
-                .updatedDate(user.getUpdatedDate())
-                .build();
+            .id(user.getId())
+            .name(user.getName())
+            .lifePoints(user.getLifePoints())
+            .score(user.getScore())
+            .currentLevel(user.getCurrentLevel())
+            .createdDate(user.getCreatedDate())
+            .updatedDate(user.getUpdatedDate())
+            .purchases(purchases)
+            .ownedProducts(owned)
+            .build();
     }
 }

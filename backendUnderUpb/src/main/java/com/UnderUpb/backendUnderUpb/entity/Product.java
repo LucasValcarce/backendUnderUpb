@@ -9,31 +9,36 @@ import lombok.*;
 
 import java.util.UUID;
 
-// TODO delete enemy
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Getter
 @Setter
 @Entity
-@Table(name = "enemies")
-public class Enemy extends AuditableEntity {
+@Table(name = "products")
+public class Product extends AuditableEntity {
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "name", length = 120, nullable = false)
+    @Column(name = "sku", length = 120, nullable = false, unique = true)
+    private String sku;
+
+    @Column(name = "name", length = 200, nullable = false)
     private String name;
 
-    @Column(name = "damage")
-    private Integer damage;
+    @Column(name = "type", length = 100)
+    private String type; // e.j., BUFF, SKIN
 
-    @Column(name = "total_life")
-    private Integer totalLife;
+    @Column(name = "description", length = 1000)
+    private String description;
 
-    @Column(name = "level")
-    private Integer level;
+    @Column(name = "price")
+    private Double price;
+
+    @Column(name = "currency", length = 10)
+    private String currency;
 
     @PrePersist
     public void ensureId() {
