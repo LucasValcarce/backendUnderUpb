@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = User.builder()
                 .name(userDto.getName())
+                .studentCode(userDto.getStudentCode())
                 .lifePoints(userDto.getLifePoints() != null ? userDto.getLifePoints() : 100)
                 .maxLifePoints(userDto.getLifePoints() != null ? userDto.getLifePoints() : 100)
                 .score(userDto.getScore() != null ? userDto.getScore() : 0)
