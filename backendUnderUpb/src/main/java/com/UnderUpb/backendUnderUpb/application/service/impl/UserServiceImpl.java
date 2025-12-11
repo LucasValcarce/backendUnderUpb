@@ -35,6 +35,10 @@ public class UserServiceImpl implements UserService {
         if (userDto == null || userDto.getName() == null) {
             throw new IllegalArgumentException("User data cannot be null");
         }
+
+        if (userRepository.findUserByStudentCode(userDto.getStudentCode()).isPresent()) {
+            throw new IllegalArgumentException("Student code already exists");
+        }
         User user = User.builder()
                 .name(userDto.getName())
                 .studentCode(userDto.getStudentCode())
@@ -78,6 +82,9 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
+        }
+        if (userDto.getStudentCode() != null && userRepository.findUserByStudentCode(userDto.getStudentCode()).isPresent()) {
+            user.setStudentCode(userDto.getStudentCode());
         }
         if (userDto.getLifePoints() != null) {
             user.setLifePoints(userDto.getLifePoints());
