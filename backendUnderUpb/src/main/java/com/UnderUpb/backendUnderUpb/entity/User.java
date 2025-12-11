@@ -28,6 +28,9 @@ public class User extends AuditableEntity {
     @Column(name = "life_points")
     private Integer lifePoints;
 
+    @Column(name="student_code", unique = true)
+    private Integer studentCode;
+
     @Column(name = "max_life_points")
     private Integer maxLifePoints;
 

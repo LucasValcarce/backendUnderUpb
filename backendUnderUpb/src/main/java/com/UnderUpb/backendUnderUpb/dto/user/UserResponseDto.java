@@ -16,6 +16,7 @@ import com.UnderUpb.backendUnderUpb.dto.owned.OwnedProductDto;
 public class UserResponseDto {
     private UUID id;
     private String name;
+    private Integer StudentCode;
     private Integer lifePoints;
     private Integer score;
     private Integer currentLevel;

@@ -9,6 +9,7 @@ import lombok.*;
 @Setter
 public class UserRequestDto {
     private String name;
+    private Integer studentCode;
     private Integer lifePoints;
     private Integer score;
     private Integer currentLevel;

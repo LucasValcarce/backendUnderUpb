@@ -57,6 +57,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+    public UserResponseDto getUserByStudentCode(Integer studentCode) {
+        User user = userRepository.findUserByStudentCode(studentCode)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with student code: " + studentCode));
+        return toResponseDto(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<UserResponseDto> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable)
                 .map(this::toResponseDto);

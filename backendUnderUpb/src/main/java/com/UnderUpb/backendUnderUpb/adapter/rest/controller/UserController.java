@@ -69,4 +69,11 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/student_code/{id}")
+    @Operation(summary = "Get user by ID", description = "Retrieves a user by their unique ID")
+    @ApiResponse(responseCode = "200", description = "User retrieved successfully")
+    public ResponseEntity<UserResponseDto> getUserByStudentCode(@PathVariable Integer id) {
+        return ResponseEntity.ok(userService.getUserByStudentCode(id));
+    }
 }

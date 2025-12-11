@@ -31,6 +31,7 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.findAll().isEmpty()) {
             User rootUser = User.builder()
                     .name("root")
+                    .studentCode(69058)
                     .lifePoints(100)
                     .maxLifePoints(100)
                     .score(0)

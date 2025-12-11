@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface UserService {
     UserResponseDto createUser(UserRequestDto userDto);
     UserResponseDto getUserById(UUID userId);
+    UserResponseDto getUserByStudentCode(Integer studentCode);
     Page<UserResponseDto> getAllUsers(Pageable pageable);
     UserResponseDto updateUser(UUID userId, UserRequestDto userDto);
     void deleteUser(UUID userId);
