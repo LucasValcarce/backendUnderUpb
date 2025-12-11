@@ -18,7 +18,7 @@
             <section class="endpoint">
                 <h2>Create Character</h2>
                 <div class="method-badge">POST</div>
-                <div class="endpoint-url">/api/characters</div>
+                <div class="endpoint-url">/api/v1/characters</div>
                 <div class="form-group">
                     <label>Character Name</label>
                     <input type="text" id="create-char-name" placeholder="e.g., Knight">
@@ -27,7 +27,7 @@
                     <label>Description</label>
                     <textarea id="create-char-desc" placeholder="Character description..."></textarea>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/characters', {
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/v1/characters', {
                     name: document.getElementById('create-char-name').value,
                     description: document.getElementById('create-char-desc').value
                 }, 'create-response')">Create Character</button>
@@ -37,7 +37,7 @@
             <section class="endpoint">
                 <h2>List Characters</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/characters</div>
+                <div class="endpoint-url">/api/v1/characters</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Page</label>
@@ -48,26 +48,26 @@
                         <input type="number" id="characters-size" value="10" placeholder="10">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/characters?page=${document.getElementById('characters-page').value}&size=${document.getElementById('characters-size').value}`, null, 'list-response')">Fetch Characters</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/characters?page=${document.getElementById('characters-page').value}&size=${document.getElementById('characters-size').value}`, null, 'list-response')">Fetch Characters</button>
                 <div class="response-container" id="list-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>Get Character by ID</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/characters/{id}</div>
+                <div class="endpoint-url">/api/v1/characters/{id}</div>
                 <div class="form-group">
                     <label>Character ID (UUID)</label>
                     <input type="text" id="get-char-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/characters/${document.getElementById('get-char-id').value}`, null, 'get-response')">Fetch Character</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/characters/${document.getElementById('get-char-id').value}`, null, 'get-response')">Fetch Character</button>
                 <div class="response-container" id="get-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>Update Character</h2>
                 <div class="method-badge">PUT</div>
-                <div class="endpoint-url">/api/characters/{id}</div>
+                <div class="endpoint-url">/api/v1/characters/{id}</div>
                 <div class="form-group">
                     <label>Character ID (UUID)</label>
                     <input type="text" id="update-char-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
@@ -80,7 +80,7 @@
                     <label>Description</label>
                     <textarea id="update-char-desc" placeholder="New description..."></textarea>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/characters/${document.getElementById('update-char-id').value}`, {
+                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/v1/characters/${document.getElementById('update-char-id').value}`, {
                     name: document.getElementById('update-char-name').value || undefined,
                     description: document.getElementById('update-char-desc').value || undefined
                 }, 'update-response')">Update Character</button>

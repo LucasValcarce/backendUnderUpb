@@ -18,19 +18,19 @@
             <section class="endpoint">
                 <h2>Top Players</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/leaderboard/top</div>
+                <div class="endpoint-url">/api/v1/leaderboard/top</div>
                 <div class="form-group">
                     <label>Limit</label>
                     <input type="number" id="leaderboard-limit" value="10" placeholder="e.g., 10">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/leaderboard/top?limit=${document.getElementById('leaderboard-limit').value}`, null, 'top-response')">Fetch Top Players</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/leaderboard/top?limit=${document.getElementById('leaderboard-limit').value}`, null, 'top-response')">Fetch Top Players</button>
                 <div class="response-container" id="top-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>Top Players (Paginated)</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/leaderboard/top/paginated</div>
+                <div class="endpoint-url">/api/v1/leaderboard/top/paginated</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Page</label>
@@ -41,14 +41,14 @@
                         <input type="number" id="leaderboard-size" value="10" placeholder="10">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/leaderboard/top/paginated?page=${document.getElementById('leaderboard-page').value}&size=${document.getElementById('leaderboard-size').value}`, null, 'top-paged-response')">Fetch Paginated</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/leaderboard/top/paginated?page=${document.getElementById('leaderboard-page').value}&size=${document.getElementById('leaderboard-size').value}`, null, 'top-paged-response')">Fetch Paginated</button>
                 <div class="response-container" id="top-paged-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>User Scores</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/leaderboard/users/{userId}</div>
+                <div class="endpoint-url">/api/v1/leaderboard/users/{userId}</div>
                 <div class="form-group">
                     <label>User ID (UUID)</label>
                     <input type="text" id="user-scores-id" placeholder="User UUID">
@@ -63,14 +63,14 @@
                         <input type="number" id="user-scores-size" value="10" placeholder="10">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/leaderboard/users/${document.getElementById('user-scores-id').value}?page=${document.getElementById('user-scores-page').value}&size=${document.getElementById('user-scores-size').value}`, null, 'user-scores-response')">Fetch User Scores</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/leaderboard/users/${document.getElementById('user-scores-id').value}?page=${document.getElementById('user-scores-page').value}&size=${document.getElementById('user-scores-size').value}`, null, 'user-scores-response')">Fetch User Scores</button>
                 <div class="response-container" id="user-scores-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>Record Score</h2>
                 <div class="method-badge">POST</div>
-                <div class="endpoint-url">/api/leaderboard/users/{userId}/score</div>
+                <div class="endpoint-url">/api/v1/leaderboard/users/{userId}/score</div>
                 <div class="form-group">
                     <label>User ID (UUID)</label>
                     <input type="text" id="record-score-user-id" placeholder="User UUID">
@@ -79,7 +79,7 @@
                     <label>Score</label>
                     <input type="number" id="record-score-value" placeholder="e.g., 1500">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('POST', `/api/leaderboard/users/${document.getElementById('record-score-user-id').value}/score?score=${document.getElementById('record-score-value').value}`, {}, 'record-response')">Record Score</button>
+                <button class="btn btn-primary" onclick="sendRequest('POST', `/api/v1/leaderboard/users/${document.getElementById('record-score-user-id').value}/score?score=${document.getElementById('record-score-value').value}`, {}, 'record-response')">Record Score</button>
                 <div class="response-container" id="record-response"></div>
             </section>
         </div>

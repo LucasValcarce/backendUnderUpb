@@ -18,19 +18,19 @@
             <section class="endpoint">
                 <h2>Calculate Final Score</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/match/users/{userId}/score</div>
+                <div class="endpoint-url">/api/v1/match/users/{userId}/score</div>
                 <div class="form-group">
                     <label>User ID (UUID)</label>
                     <input type="text" id="match-user-id" placeholder="User UUID">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/match/users/${document.getElementById('match-user-id').value}/score`, null, 'calc-response')">Calculate Score</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/match/users/${document.getElementById('match-user-id').value}/score`, null, 'calc-response')">Calculate Score</button>
                 <div class="response-container" id="calc-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>End Match</h2>
                 <div class="method-badge">POST</div>
-                <div class="endpoint-url">/api/match/users/{userId}/end</div>
+                <div class="endpoint-url">/api/v1/match/users/{userId}/end</div>
                 <div class="form-group">
                     <label>User ID (UUID)</label>
                     <input type="text" id="end-match-user-id" placeholder="User UUID">
@@ -39,7 +39,7 @@
                     <label>Final Score</label>
                     <input type="number" id="end-match-score" placeholder="e.g., 2500">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('POST', `/api/match/users/${document.getElementById('end-match-user-id').value}/end?finalScore=${document.getElementById('end-match-score').value}`, {}, 'end-response')">End Match</button>
+                <button class="btn btn-primary" onclick="sendRequest('POST', `/api/v1/match/users/${document.getElementById('end-match-user-id').value}/end?finalScore=${document.getElementById('end-match-score').value}`, {}, 'end-response')">End Match</button>
                 <div class="response-container" id="end-response"></div>
             </section>
         </div>

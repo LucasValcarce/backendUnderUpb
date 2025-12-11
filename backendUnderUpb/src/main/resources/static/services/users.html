@@ -19,8 +19,8 @@
             <section class="endpoint">
                 <h2>Create User</h2>
                 <div class="method-badge">POST</div>
-                <div class="endpoint-url">/api/users</div>
-                
+                <div class="endpoint-url">/api/v1/users</div>
+
                 <div class="form-group">
                     <label>Username</label>
                     <input type="text" id="create-user-name" placeholder="e.g., Player123">
@@ -41,7 +41,7 @@
                         <input type="number" id="create-user-level" value="1" placeholder="e.g., 1">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/users', {
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/v1/users', {
                     name: document.getElementById('create-user-name').value,
                     lifePoints: parseInt(document.getElementById('create-user-life').value),
                     score: parseInt(document.getElementById('create-user-score').value),
@@ -54,8 +54,8 @@
             <section class="endpoint">
                 <h2>List Users</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/users</div>
-                
+                <div class="endpoint-url">/api/v1/users</div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Page (0-indexed)</label>
@@ -66,7 +66,7 @@
                         <input type="number" id="users-size" value="10" placeholder="10">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/users?page=${document.getElementById('users-page').value}&size=${document.getElementById('users-size').value}`, null, 'list-response')">Fetch Users</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/users?page=${document.getElementById('users-page').value}&size=${document.getElementById('users-size').value}`, null, 'list-response')">Fetch Users</button>
                 <div class="response-container" id="list-response"></div>
             </section>
 
@@ -74,13 +74,13 @@
             <section class="endpoint">
                 <h2>Get User by ID</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/users/{id}</div>
-                
+                <div class="endpoint-url">/api/v1/users/{id}</div>
+
                 <div class="form-group">
                     <label>User ID (UUID)</label>
                     <input type="text" id="get-user-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/users/${document.getElementById('get-user-id').value}`, null, 'get-response')">Fetch User</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/users/${document.getElementById('get-user-id').value}`, null, 'get-response')">Fetch User</button>
                 <div class="response-container" id="get-response"></div>
             </section>
 
@@ -88,8 +88,8 @@
             <section class="endpoint">
                 <h2>Update User</h2>
                 <div class="method-badge">PUT</div>
-                <div class="endpoint-url">/api/users/{id}</div>
-                
+                <div class="endpoint-url">/api/v1/users/{id}</div>
+
                 <div class="form-group">
                     <label>User ID (UUID)</label>
                     <input type="text" id="update-user-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
@@ -108,7 +108,7 @@
                         <input type="number" id="update-user-score" placeholder="e.g., 100">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/users/${document.getElementById('update-user-id').value}`, {
+                <button class="btn btn-primary" onclick="sendRequest('PUT', `/api/v1/users/${document.getElementById('update-user-id').value}`, {
                     name: document.getElementById('update-user-name').value || undefined,
                     lifePoints: document.getElementById('update-user-life').value ? parseInt(document.getElementById('update-user-life').value) : undefined,
                     score: document.getElementById('update-user-score').value ? parseInt(document.getElementById('update-user-score').value) : undefined

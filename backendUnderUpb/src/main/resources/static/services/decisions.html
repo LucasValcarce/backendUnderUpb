@@ -18,7 +18,7 @@
             <section class="endpoint">
                 <h2>Create Decision</h2>
                 <div class="method-badge">POST</div>
-                <div class="endpoint-url">/api/decisions</div>
+                <div class="endpoint-url">/api/v1/decisions</div>
                 <div class="form-group">
                     <label>Question ID (UUID)</label>
                     <input type="text" id="create-decision-question" placeholder="Question UUID">
@@ -31,7 +31,7 @@
                     <label>Description</label>
                     <textarea id="create-decision-desc" placeholder="Decision description..."></textarea>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/decisions', {
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/v1/decisions', {
                     questionId: document.getElementById('create-decision-question').value,
                     decisionContent: document.getElementById('create-decision-payload').value,
                     description: document.getElementById('create-decision-desc').value
@@ -42,31 +42,31 @@
             <section class="endpoint">
                 <h2>Get Decisions by Question</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/decisions/questions/{questionId}</div>
+                <div class="endpoint-url">/api/v1/decisions/questions/{questionId}</div>
                 <div class="form-group">
                     <label>Question ID (UUID)</label>
                     <input type="text" id="question-decisions-id" placeholder="Question UUID">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/decisions/questions/${document.getElementById('question-decisions-id').value}`, null, 'by-question-response')">Fetch Decisions</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/decisions/questions/${document.getElementById('question-decisions-id').value}`, null, 'by-question-response')">Fetch Decisions</button>
                 <div class="response-container" id="by-question-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>Get Decision by ID</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/decisions/{id}</div>
+                <div class="endpoint-url">/api/v1/decisions/{id}</div>
                 <div class="form-group">
                     <label>Decision ID (UUID)</label>
                     <input type="text" id="get-decision-id" placeholder="Decision UUID">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/decisions/${document.getElementById('get-decision-id').value}`, null, 'get-response')">Fetch Decision</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/decisions/${document.getElementById('get-decision-id').value}`, null, 'get-response')">Fetch Decision</button>
                 <div class="response-container" id="get-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>List All Decisions</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/decisions</div>
+                <div class="endpoint-url">/api/v1/decisions</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Page</label>
@@ -77,19 +77,19 @@
                         <input type="number" id="decisions-size" value="10" placeholder="10">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/decisions?page=${document.getElementById('decisions-page').value}&size=${document.getElementById('decisions-size').value}`, null, 'list-response')">Fetch Decisions</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/decisions?page=${document.getElementById('decisions-page').value}&size=${document.getElementById('decisions-size').value}`, null, 'list-response')">Fetch Decisions</button>
                 <div class="response-container" id="list-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>Delete Decision</h2>
                 <div class="method-badge delete">DELETE</div>
-                <div class="endpoint-url">/api/decisions/{id}</div>
+                <div class="endpoint-url">/api/v1/decisions/{id}</div>
                 <div class="form-group">
                     <label>Decision ID (UUID)</label>
                     <input type="text" id="delete-decision-id" placeholder="Decision UUID">
                 </div>
-                <button class="btn btn-danger" onclick="sendRequest('DELETE', `/api/decisions/${document.getElementById('delete-decision-id').value}`, null, 'delete-response')">Delete Decision</button>
+                <button class="btn btn-danger" onclick="sendRequest('DELETE', `/api/v1/decisions/${document.getElementById('delete-decision-id').value}`, null, 'delete-response')">Delete Decision</button>
                 <div class="response-container" id="delete-response"></div>
             </section>
         </div>

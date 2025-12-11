@@ -18,7 +18,7 @@
             <section class="endpoint">
                 <h2>Create Enemy</h2>
                 <div class="method-badge">POST</div>
-                <div class="endpoint-url">/api/enemies</div>
+                <div class="endpoint-url">/api/v1/enemies</div>
                 <div class="form-group">
                     <label>Enemy Name</label>
                     <input type="text" id="create-enemy-name" placeholder="e.g., Goblin">
@@ -39,7 +39,7 @@
                         <input type="number" id="create-enemy-level" value="1" placeholder="e.g., 1">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/enemies', {
+                <button class="btn btn-primary" onclick="sendRequest('POST', '/api/v1/enemies', {
                     name: document.getElementById('create-enemy-name').value,
                     damage: parseInt(document.getElementById('create-enemy-damage').value),
                     totalLife: parseInt(document.getElementById('create-enemy-life').value),
@@ -51,31 +51,31 @@
             <section class="endpoint">
                 <h2>Enemies by Level</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/enemies/level/{level}</div>
+                <div class="endpoint-url">/api/v1/enemies/level/{level}</div>
                 <div class="form-group">
                     <label>Level</label>
                     <input type="number" id="enemies-level" value="1" placeholder="e.g., 1">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/enemies/level/${document.getElementById('enemies-level').value}`, null, 'level-response')">Fetch Enemies</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/enemies/level/${document.getElementById('enemies-level').value}`, null, 'level-response')">Fetch Enemies</button>
                 <div class="response-container" id="level-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>Get Enemy by ID</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/enemies/{id}</div>
+                <div class="endpoint-url">/api/v1/enemies/{id}</div>
                 <div class="form-group">
                     <label>Enemy ID (UUID)</label>
                     <input type="text" id="get-enemy-id" placeholder="e.g., 550e8400-e29b-41d4-a716-446655440000">
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/enemies/${document.getElementById('get-enemy-id').value}`, null, 'get-response')">Fetch Enemy</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/enemies/${document.getElementById('get-enemy-id').value}`, null, 'get-response')">Fetch Enemy</button>
                 <div class="response-container" id="get-response"></div>
             </section>
 
             <section class="endpoint">
                 <h2>List All Enemies</h2>
                 <div class="method-badge">GET</div>
-                <div class="endpoint-url">/api/enemies</div>
+                <div class="endpoint-url">/api/v1/enemies</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Page</label>
@@ -86,7 +86,7 @@
                         <input type="number" id="enemies-size" value="10" placeholder="10">
                     </div>
                 </div>
-                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/enemies?page=${document.getElementById('enemies-page').value}&size=${document.getElementById('enemies-size').value}`, null, 'list-response')">Fetch All Enemies</button>
+                <button class="btn btn-primary" onclick="sendRequest('GET', `/api/v1/enemies?page=${document.getElementById('enemies-page').value}&size=${document.getElementById('enemies-size').value}`, null, 'list-response')">Fetch All Enemies</button>
                 <div class="response-container" id="list-response"></div>
             </section>
         </div>
