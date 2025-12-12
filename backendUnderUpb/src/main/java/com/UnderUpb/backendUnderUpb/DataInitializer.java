@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -38,6 +39,123 @@ public class DataInitializer implements CommandLineRunner {
                     .currentLevel(1)
                     .build();
             userRepository.save(rootUser);
+            // Usuarios con score alto (para top rankings)
+            User player1 = User.builder()
+                    .name("ShadowNinja")
+                    .studentCode(75001)
+                    .lifePoints(85)
+                    .maxLifePoints(100)
+                    .score(9850)
+                    .currentLevel(25)
+                    .build();
+
+            User player2 = User.builder()
+                    .name("CyberMage")
+                    .studentCode(75002)
+                    .lifePoints(100)
+                    .maxLifePoints(100)
+                    .score(11250)
+                    .currentLevel(30)
+                    .build();
+
+            User player3 = User.builder()
+                    .name("QuantumKnight")
+                    .studentCode(75003)
+                    .lifePoints(42)
+                    .maxLifePoints(100)
+                    .score(8750)
+                    .currentLevel(22)
+                    .build();
+
+// Usuarios con score medio
+            User player4 = User.builder()
+                    .name("NeoPhantom")
+                    .studentCode(75004)
+                    .lifePoints(60)
+                    .maxLifePoints(100)
+                    .score(5200)
+                    .currentLevel(15)
+                    .build();
+
+            User player5 = User.builder()
+                    .name("AzureStriker")
+                    .studentCode(75005)
+                    .lifePoints(95)
+                    .maxLifePoints(100)
+                    .score(4300)
+                    .currentLevel(12)
+                    .build();
+
+            User player6 = User.builder()
+                    .name("CrystalWarden")
+                    .studentCode(75006)
+                    .lifePoints(30)
+                    .maxLifePoints(100)
+                    .score(3100)
+                    .currentLevel(10)
+                    .build();
+
+// Usuarios con score bajo
+            User player7 = User.builder()
+                    .name("BlazeRunner")
+                    .studentCode(75007)
+                    .lifePoints(75)
+                    .maxLifePoints(100)
+                    .score(1250)
+                    .currentLevel(5)
+                    .build();
+
+            User player8 = User.builder()
+                    .name("FrostSeeker")
+                    .studentCode(75008)
+                    .lifePoints(50)
+                    .maxLifePoints(100)
+                    .score(850)
+                    .currentLevel(4)
+                    .build();
+
+// Usuarios con score muy alto (para asegurar top positions)
+            User player9 = User.builder()
+                    .name("TitanSlayer")
+                    .studentCode(75009)
+                    .lifePoints(100)
+                    .maxLifePoints(100)
+                    .score(15500)
+                    .currentLevel(35)
+                    .build();
+
+            User player10 = User.builder()
+                    .name("DragonMaster")
+                    .studentCode(75010)
+                    .lifePoints(88)
+                    .maxLifePoints(100)
+                    .score(14200)
+                    .currentLevel(33)
+                    .build();
+
+// Usuarios con score intermedio
+            User player11 = User.builder()
+                    .name("StarVoyager")
+                    .studentCode(75011)
+                    .lifePoints(65)
+                    .maxLifePoints(100)
+                    .score(6800)
+                    .currentLevel(18)
+                    .build();
+
+            User player12 = User.builder()
+                    .name("MythicHunter")
+                    .studentCode(75012)
+                    .lifePoints(25)
+                    .maxLifePoints(100)
+                    .score(2500)
+                    .currentLevel(8)
+                    .build();
+
+            List<User> users = Arrays.asList(player1, player2, player3, player4, player5,
+                    player6, player7, player8, player9, player10,
+                    player11, player12);
+            userRepository.saveAll(users);
             log.info("Root user created successfully");
 
             // Create Level 1: Forest Temple (Tutorial)

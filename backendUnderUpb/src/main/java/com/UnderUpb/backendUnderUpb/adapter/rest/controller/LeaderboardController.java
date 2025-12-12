@@ -24,7 +24,7 @@ public class LeaderboardController {
     private final LeaderboardService leaderboardService;
 
     @GetMapping("/top")
-    @Operation(summary = "Get top entries", description = "Retrieves the top players")
+    @Operation(summary = "Get top entries (from players table)", description = "Retrieves the top players by score from the users (players) table")
     @ApiResponse(responseCode = "200", description = "Top entries retrieved successfully")
     public ResponseEntity<List<LeaderboardResponseDto>> getTopEntries(
             @RequestParam(defaultValue = "10") int limit) {
@@ -48,7 +48,7 @@ public class LeaderboardController {
     }
 
     @PostMapping("/users/{userId}/score")
-    @Operation(summary = "Record score", description = "Records a new score for a user")
+    @Operation(summary = "Record score (update user)", description = "Updates the user's stored score (if the provided score is higher than the current stored score)")
     @ApiResponse(responseCode = "201", description = "Score recorded successfully")
     public ResponseEntity<LeaderboardResponseDto> recordScore(
             @PathVariable UUID userId,

@@ -2,8 +2,8 @@ package com.UnderUpb.backendUnderUpb.application.service.impl;
 
 import com.UnderUpb.backendUnderUpb.application.service.LeaderboardService;
 import com.UnderUpb.backendUnderUpb.dto.leaderboard.LeaderboardResponseDto;
-import com.UnderUpb.backendUnderUpb.entity.LeaderboardEntry;
-import com.UnderUpb.backendUnderUpb.repository.LeaderboardRepository;
+import com.UnderUpb.backendUnderUpb.entity.User;
+import com.UnderUpb.backendUnderUpb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,30 +19,39 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class LeaderboardServiceImpl implements LeaderboardService {
 
-    private final LeaderboardRepository leaderboardRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<LeaderboardResponseDto> getTopEntries(int limit) {
-        return leaderboardRepository.findAll().stream()
-                .sorted((a, b) -> b.getScore().compareTo(a.getScore()))
-                .limit(limit)
+        var pageRequest = org.springframework.data.domain.PageRequest.of(0, Math.max(1, limit), org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Order.desc("score")));
+        return userRepository.findAll(pageRequest).getContent().stream()
                 .map(this::toResponseDto)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Page<LeaderboardResponseDto> getTopEntriesPaginated(Pageable pageable) {
-        return leaderboardRepository.findTopEntries(pageable)
-                .map(this::toResponseDto);
+        public Page<LeaderboardResponseDto> getTopEntriesPaginated(Pageable pageable) {
+        var p = org.springframework.data.domain.PageRequest.of(
+            pageable.getPageNumber(),
+            pageable.getPageSize(),
+            org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Order.desc("score"))
+        );
+        return userRepository.findAll(p)
+            .map(this::toResponseDto);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<LeaderboardResponseDto> getUserScores(UUID userId, Pageable pageable) {
-        return leaderboardRepository.findByUserIdOrderByScoreDesc(userId, pageable)
-                .map(this::toResponseDto);
+        var userOpt = userRepository.findById(userId);
+        if (userOpt.isEmpty()) {
+            return org.springframework.data.domain.Page.empty(pageable);
+        }
+        var dto = toResponseDto(userOpt.get());
+        java.util.List<LeaderboardResponseDto> list = java.util.Collections.singletonList(dto);
+        return new org.springframework.data.domain.PageImpl<>(list, pageable, 1);
     }
 
     @Override
@@ -51,22 +60,26 @@ public class LeaderboardServiceImpl implements LeaderboardService {
         if (userId == null || score == null) {
             throw new IllegalArgumentException("User ID and score cannot be null");
         }
-        LeaderboardEntry entry = LeaderboardEntry.builder()
-                .userId(userId)
-                .score(score)
-                .build();
-        LeaderboardEntry savedEntry = leaderboardRepository.save(entry);
-        log.info("Score recorded for user: {} with score: {}", userId, score);
-        return toResponseDto(savedEntry);
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new java.lang.IllegalArgumentException("User not found"));
+        // Update score if higher than current score, otherwise keep current
+        if (user.getScore() == null || score > user.getScore()) {
+            user.setScore(score);
+            user = userRepository.save(user);
+            log.info("User {} score updated to {}", userId, score);
+        } else {
+            log.debug("Received lower score for user {}: {} (current {})", userId, score, user.getScore());
+        }
+        return toResponseDto(user);
     }
 
-    private LeaderboardResponseDto toResponseDto(LeaderboardEntry entry) {
+    private LeaderboardResponseDto toResponseDto(User user) {
         return LeaderboardResponseDto.builder()
-                .id(entry.getId())
-                .userId(entry.getUserId())
-                .score(entry.getScore())
-                .createdDate(entry.getCreatedDate())
-                .updatedDate(entry.getUpdatedDate())
+                .id(user.getId())
+                .userId(user.getId())
+                .score(user.getScore())
+                .createdDate(user.getCreatedDate())
+                .updatedDate(user.getUpdatedDate())
                 .build();
     }
 }
