@@ -21,6 +21,8 @@ public class DataInitializer implements CommandLineRunner {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final CharacterRepository characterRepository;
+    private final ProductRepository productRepository;
+    private final PurchaseRepository purchaseRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -157,6 +159,24 @@ public class DataInitializer implements CommandLineRunner {
                     player11, player12);
             userRepository.saveAll(users);
             log.info("Root user created successfully");
+
+            // Create initial products
+            Product p1 = Product.builder()
+                    .name("Starter Pack")
+                    .description("Starter pack: skin + coins")
+                    .type("BUNDLE")
+                    .price(1.99)
+                    .currency("USD")
+                    .build();
+            Product p2 = Product.builder()
+                    .name("Extra Life")
+                    .description("Instantly restore 50 life points")
+                    .type("CONSUMABLE")
+                    .price(0.99)
+                    .currency("USD")
+                    .build();
+            productRepository.save(p1);
+            productRepository.save(p2);
 
             // Create Level 1: Forest Temple (Tutorial)
             Level level1 = Level.builder()
@@ -350,6 +370,31 @@ public class DataInitializer implements CommandLineRunner {
 
             log.info("Level 1 questions created");
 
+                        // Add extra questions to level 1 to reach 20 questions
+                        java.util.List<Question> existingLevel1 = questionRepository.findByLevelId(level1.getId());
+                        int startIndex1 = existingLevel1.size() + 1;
+                        for (int i = startIndex1; i <= 20; i++) {
+                                Question q = Question.builder()
+                                                .text(String.format("Level 1 - Extra Question %02d", i))
+                                                .description("Auto-generated additional question for Level 1")
+                                                .level(level1)
+                                                .build();
+                                q = questionRepository.save(q);
+                                java.util.List<Answers> answers = new java.util.ArrayList<>();
+                                int correctIndex = new java.util.Random().nextInt(4);
+                                for (int j = 0; j < 4; j++) {
+                                        answers.add(Answers.builder()
+                                                        .question(q)
+                                                        .text(String.format("Option %d for Extra Q%02d", j + 1, i))
+                                                        .isCorrect(j == correctIndex)
+                                                        .explanation(j == correctIndex ? "Correct answer" : "Wrong answer")
+                                                        .build());
+                                }
+                                answerRepository.saveAll(answers);
+                                q.setAnswers(answers);
+                                questionRepository.save(q);
+                        }
+
             // Create Level 2: Ice Castle
             Level level2 = Level.builder()
                     .name("Castillo de Hielo")
@@ -542,6 +587,31 @@ public class DataInitializer implements CommandLineRunner {
 
             log.info("Level 2 questions created");
 
+                        // Add extra questions to level 2 to reach 20 questions
+                        java.util.List<Question> existingLevel2 = questionRepository.findByLevelId(level2.getId());
+                        int startIndex2 = existingLevel2.size() + 1;
+                        for (int i = startIndex2; i <= 20; i++) {
+                                Question q = Question.builder()
+                                                .text(String.format("Level 2 - Extra Question %02d", i))
+                                                .description("Auto-generated additional question for Level 2")
+                                                .level(level2)
+                                                .build();
+                                q = questionRepository.save(q);
+                                java.util.List<Answers> answers = new java.util.ArrayList<>();
+                                int correctIndex = new java.util.Random().nextInt(4);
+                                for (int j = 0; j < 4; j++) {
+                                        answers.add(Answers.builder()
+                                                        .question(q)
+                                                        .text(String.format("Option %d for Extra Q%02d", j + 1, i))
+                                                        .isCorrect(j == correctIndex)
+                                                        .explanation(j == correctIndex ? "Correct answer" : "Wrong answer")
+                                                        .build());
+                                }
+                                answerRepository.saveAll(answers);
+                                q.setAnswers(answers);
+                                questionRepository.save(q);
+                        }
+
             // Create Level 3: Dark Dungeon (Pong Game)
             Level level3 = Level.builder()
                     .name("Calabozo Oscuro")
@@ -551,44 +621,8 @@ public class DataInitializer implements CommandLineRunner {
             level3 = levelRepository.save(level3);
             log.info("Level 3 created: {}", level3.getId());
 
-            // Level 3 Question
-            Question q3_1 = Question.builder()
-                    .text("¿Cuál es el resultado de 15 × 7?")
-                    .level(level3)
-                    .description("Una pregunta de multiplicación")
-                    .build();
-            q3_1 = questionRepository.save(q3_1);
-
-            List<Answers> answers3_1 = new ArrayList<>();
-            answers3_1.add(Answers.builder()
-                    .question(q3_1)
-                    .text("100")
-                    .isCorrect(false)
-                    .explanation("15 × 7 no es 100.")
-                    .build());
-            answers3_1.add(Answers.builder()
-                    .question(q3_1)
-                    .text("105")
-                    .isCorrect(true)
-                    .explanation("¡Correcto! 15 × 7 = 105.")
-                    .build());
-            answers3_1.add(Answers.builder()
-                    .question(q3_1)
-                    .text("110")
-                    .isCorrect(false)
-                    .explanation("15 × 7 no es 110.")
-                    .build());
-            answers3_1.add(Answers.builder()
-                    .question(q3_1)
-                    .text("95")
-                    .isCorrect(false)
-                    .explanation("15 × 7 no es 95.")
-                    .build());
-            answerRepository.saveAll(answers3_1);
-            q3_1.setAnswers(answers3_1);
-            questionRepository.save(q3_1);
-
-            log.info("Level 3 questions created");
+            // Level 3 (Pong) intentionally created without questions
+            log.info("Level 3 (Pong) created without questions: {}", level3.getId());
 
             // Create sample characters
             CharacterEntity knight = CharacterEntity.builder()

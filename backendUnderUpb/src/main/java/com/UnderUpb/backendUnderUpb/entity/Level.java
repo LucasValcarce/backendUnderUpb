@@ -26,7 +26,7 @@ public class Level extends AuditableEntity {
     @Column(name = "description", length = 1000)
     private String description;
 
-    @Column(name = "order_index")
+    @Column(name = "order_index", unique = true)
     private Integer orderIndex;
 
     @OneToMany(mappedBy = "level", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

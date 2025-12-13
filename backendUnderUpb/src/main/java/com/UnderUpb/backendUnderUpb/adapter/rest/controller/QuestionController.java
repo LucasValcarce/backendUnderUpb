@@ -50,12 +50,19 @@ public class QuestionController {
     @ApiResponse(responseCode = "200", description = "Questions retrieved successfully")
     public ResponseEntity<List<QuestionResponseDto>> getQuestionsByLevel(
             @PathVariable Integer level,
-            @RequestParam(name = "count", required = false) Integer count) {
-        if (count == null) {
-            return ResponseEntity.ok(questionService.getQuestionsByLevel(level));
-        }
+            @RequestParam(name = "count", defaultValue = "10") Integer count) {
         return ResponseEntity.ok(questionService.getRandomQuestionsByLevel(level, count));
     }
+
+    @GetMapping("/level_index/{level_index}")
+    @Operation(summary = "Get questions by level", description = "Retrieves questions for a specific level. Use ?count=N for N random questions")
+    @ApiResponse(responseCode = "200", description = "Questions retrieved successfully")
+    public ResponseEntity<List<QuestionResponseDto>> getQuestionsByLevelOrder(
+            @PathVariable Integer level_index,
+            @RequestParam(name = "count", defaultValue = "10") Integer count) {
+        return ResponseEntity.ok(questionService.getRandomQuestionsByLevel(level_index, count));
+    }
+
 
     @GetMapping("/levelId/{levelId}")
     @Operation(summary = "Get questions by level ID", description = "Retrieves questions for a specific level by ID")

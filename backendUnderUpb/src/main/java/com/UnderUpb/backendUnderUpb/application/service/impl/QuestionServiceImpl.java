@@ -147,6 +147,7 @@ public class QuestionServiceImpl implements QuestionService {
                         .explanation(answer.getExplanation())
                         .build())
                 .collect(Collectors.toList());
+        java.util.Collections.shuffle(answers);
 
         return QuestionResponseDto.builder()
                 .id(question.getId())
