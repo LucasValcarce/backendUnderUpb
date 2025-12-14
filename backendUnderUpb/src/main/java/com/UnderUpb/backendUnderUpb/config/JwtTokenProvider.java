@@ -25,7 +25,7 @@ public class JwtTokenProvider implements Serializable {
     @Value("${security.jwt.token.secret-key:Ch4ng1t}")
     private String secretKey;
     private byte[] secretKeyByte;
-    @Value("${security_jwt_token_expire-length:28800000}")
+    @Value("${security_jwt_token_expire-length:129600}")
     private int validityInMinutes;
 
     @PostConstruct

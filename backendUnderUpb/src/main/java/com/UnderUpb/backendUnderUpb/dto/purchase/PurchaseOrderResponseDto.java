@@ -13,11 +13,14 @@ import java.util.UUID;
 public class PurchaseOrderResponseDto {
     private UUID id;
     private UUID userId;
+    private UUID productId;
     private String itemName;
     private Double amount;
     private String currency;
     private String description;
     private String status;
+    private String externalPaymentId;
+    private String paymentUrl;
     private Instant createdDate;
     private Instant updatedDate;
 }

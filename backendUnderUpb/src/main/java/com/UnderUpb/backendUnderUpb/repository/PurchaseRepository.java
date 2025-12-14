@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface PurchaseRepository extends JpaRepository<Purchase, UUID> {
     List<Purchase> findByUserId(UUID userId);
     List<Purchase> findByProductId(UUID productId);
+    Purchase findByExternalPaymentId(String externalPaymentId);
 }

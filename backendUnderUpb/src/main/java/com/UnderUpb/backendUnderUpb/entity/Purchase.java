@@ -43,6 +43,12 @@ public class Purchase extends AuditableEntity {
     @Column(name = "purchased_at")
     private Instant purchasedAt;
 
+    @Column(name = "external_payment_id", length = 200)
+    private String externalPaymentId;
+
+    @Column(name = "payment_url", length = 2000)
+    private String paymentUrl;
+
     @PrePersist
     public void ensureId() {
         if (this.id == null) this.id = UUID.randomUUID();

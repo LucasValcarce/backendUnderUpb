@@ -36,6 +36,27 @@ public class PurchaseController {
         return ResponseEntity.ok(purchaseService.getPurchaseOrder(orderId));
     }
 
+    @GetMapping("/users/{userId}")
+    @Operation(summary = "Get purchases by user", description = "Retrieves purchases for a given user")
+    @ApiResponse(responseCode = "200", description = "Purchases retrieved successfully")
+    public ResponseEntity<java.util.List<PurchaseOrderResponseDto>> getPurchasesByUser(@PathVariable UUID userId) {
+        return ResponseEntity.ok(purchaseService.getPurchasesByUser(userId));
+    }
+
+    @GetMapping("/products/{productId}")
+    @Operation(summary = "Get purchases by product", description = "Retrieves purchases for a given product")
+    @ApiResponse(responseCode = "200", description = "Purchases retrieved successfully")
+    public ResponseEntity<java.util.List<PurchaseOrderResponseDto>> getPurchasesByProduct(@PathVariable UUID productId) {
+        return ResponseEntity.ok(purchaseService.getPurchasesByProduct(productId));
+    }
+
+    @GetMapping
+    @Operation(summary = "Get all purchases", description = "Retrieves all purchases with pagination")
+    @ApiResponse(responseCode = "200", description = "Purchases retrieved successfully")
+    public ResponseEntity<org.springframework.data.domain.Page<PurchaseOrderResponseDto>> getAllPurchases(org.springframework.data.domain.Pageable pageable) {
+        return ResponseEntity.ok(purchaseService.getAllPurchases(pageable));
+    }
+
     @PostMapping("/webhook/payment-callback")
     @Operation(summary = "Payment callback", description = "Handles payment provider webhooks")
     @ApiResponse(responseCode = "200", description = "Webhook processed successfully")
@@ -57,5 +78,13 @@ public class PurchaseController {
     @ApiResponse(responseCode = "200", description = "Purchase marked as failed")
     public ResponseEntity<PurchaseOrderResponseDto> failPurchase(@PathVariable UUID orderId) {
         return ResponseEntity.ok(purchaseService.failPurchase(orderId));
+    }
+
+    @DeleteMapping("/orders/{orderId}")
+    @Operation(summary = "Delete purchase", description = "Deletes a purchase order")
+    @ApiResponse(responseCode = "204", description = "Purchase deleted successfully")
+    public ResponseEntity<Void> deletePurchase(@PathVariable UUID orderId) {
+        purchaseService.deletePurchase(orderId);
+        return ResponseEntity.noContent().build();
     }
 }
