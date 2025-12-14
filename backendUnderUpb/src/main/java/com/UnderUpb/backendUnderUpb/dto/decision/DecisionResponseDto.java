@@ -12,7 +12,6 @@ import java.util.UUID;
 @Setter
 public class DecisionResponseDto {
     private UUID id;
-    private UUID questionId;
     private String decisionContent;
     private String description;
     private Instant createdDate;

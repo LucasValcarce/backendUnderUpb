@@ -9,5 +9,4 @@ import java.util.UUID;
 
 @Repository
 public interface DecisionRepository extends JpaRepository<Decision, UUID> {
-    List<Decision> findByQuestionId(UUID questionId);
 }

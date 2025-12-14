@@ -14,5 +14,4 @@ public interface DecisionService {
     Page<DecisionResponseDto> getAllDecisions(Pageable pageable);
     DecisionResponseDto updateDecision(UUID decisionId, DecisionRequestDto decisionDto);
     void deleteDecision(UUID decisionId);
-    List<DecisionResponseDto> getDecisionsByQuestion(UUID questionId);
 }

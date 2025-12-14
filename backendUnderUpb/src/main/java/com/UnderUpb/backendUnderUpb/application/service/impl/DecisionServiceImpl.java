@@ -25,11 +25,10 @@ public class DecisionServiceImpl implements DecisionService {
     @Override
     @Transactional
     public DecisionResponseDto createDecision(DecisionRequestDto decisionDto) {
-        if (decisionDto == null || decisionDto.getQuestionId() == null) {
+        if (decisionDto == null) {
             throw new IllegalArgumentException("Decision data cannot be null");
         }
         Decision decision = Decision.builder()
-                .questionId(decisionDto.getQuestionId())
                 .decisionContent(decisionDto.getDecisionContent())
                 .description(decisionDto.getDescription())
                 .build();
@@ -58,9 +57,6 @@ public class DecisionServiceImpl implements DecisionService {
     public DecisionResponseDto updateDecision(UUID decisionId, DecisionRequestDto decisionDto) {
         Decision decision = decisionRepository.findById(decisionId)
                 .orElseThrow(() -> new IllegalArgumentException("Decision not found with ID: " + decisionId));
-        if (decisionDto.getQuestionId() != null) {
-            decision.setQuestionId(decisionDto.getQuestionId());
-        }
         if (decisionDto.getDecisionContent() != null) {
             decision.setDecisionContent(decisionDto.getDecisionContent());
         }
@@ -82,18 +78,9 @@ public class DecisionServiceImpl implements DecisionService {
         log.info("Decision deleted with ID: {}", decisionId);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<DecisionResponseDto> getDecisionsByQuestion(UUID questionId) {
-        return decisionRepository.findByQuestionId(questionId).stream()
-                .map(this::toResponseDto)
-                .toList();
-    }
-
     private DecisionResponseDto toResponseDto(Decision decision) {
         return DecisionResponseDto.builder()
                 .id(decision.getId())
-                .questionId(decision.getQuestionId())
                 .decisionContent(decision.getDecisionContent())
                 .description(decision.getDescription())
                 .createdDate(decision.getCreatedDate())

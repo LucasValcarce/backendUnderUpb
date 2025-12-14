@@ -45,13 +45,6 @@ public class DecisionController {
         return ResponseEntity.ok(decisionService.getDecisionById(id));
     }
 
-    @GetMapping("/questions/{questionId}")
-    @Operation(summary = "Get decisions by question", description = "Retrieves all decisions for a specific question")
-    @ApiResponse(responseCode = "200", description = "Decisions retrieved successfully")
-    public ResponseEntity<List<DecisionResponseDto>> getDecisionsByQuestion(@PathVariable UUID questionId) {
-        return ResponseEntity.ok(decisionService.getDecisionsByQuestion(questionId));
-    }
-
     @PutMapping("/{id}")
     @Operation(summary = "Update decision", description = "Updates an existing decision")
     @ApiResponse(responseCode = "200", description = "Decision updated successfully")

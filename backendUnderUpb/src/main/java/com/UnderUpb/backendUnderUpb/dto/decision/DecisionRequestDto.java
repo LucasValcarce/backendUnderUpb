@@ -10,7 +10,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DecisionRequestDto {
-    private UUID questionId;
     private String decisionContent;
     private String description;
 }
