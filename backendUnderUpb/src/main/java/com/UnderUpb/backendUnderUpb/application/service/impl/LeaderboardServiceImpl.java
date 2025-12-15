@@ -75,11 +75,9 @@ public class LeaderboardServiceImpl implements LeaderboardService {
 
     private LeaderboardResponseDto toResponseDto(User user) {
         return LeaderboardResponseDto.builder()
-                .id(user.getId())
                 .userId(user.getId())
+                .name(user.getName())
                 .score(user.getScore())
-                .createdDate(user.getCreatedDate())
-                .updatedDate(user.getUpdatedDate())
                 .build();
     }
 }

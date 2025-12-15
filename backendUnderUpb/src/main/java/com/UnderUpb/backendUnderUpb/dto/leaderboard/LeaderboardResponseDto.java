@@ -11,9 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class LeaderboardResponseDto {
-    private UUID id;
     private UUID userId;
+    private String name;
     private Integer score;
-    private Instant createdDate;
-    private Instant updatedDate;
 }

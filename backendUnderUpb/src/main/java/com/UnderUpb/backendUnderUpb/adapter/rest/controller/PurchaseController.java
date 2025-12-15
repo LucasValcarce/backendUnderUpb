@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,19 +15,55 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
+@Slf4j
 @RequestMapping("/api/v1/purchases")
 @RequiredArgsConstructor
 @Tag(name = "Purchase Management", description = "Endpoints for managing in-game purchases")
 public class PurchaseController {
 
     private final PurchaseService purchaseService;
+    private final com.UnderUpb.backendUnderUpb.implementations.upbolis.UpbilisPurchaseService upbilisPurchaseService;
 
     @PostMapping("/orders")
     @Operation(summary = "Create purchase order", description = "Creates a new purchase order")
     @ApiResponse(responseCode = "201", description = "Purchase order created successfully")
-    public ResponseEntity<PurchaseOrderResponseDto> createPurchaseOrder(
-            @RequestBody PurchaseOrderRequestDto purchaseDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(purchaseService.createPurchaseOrder(purchaseDto));
+    public ResponseEntity<?> createPurchaseOrder(
+            @RequestBody PurchaseOrderRequestDto purchaseDto,
+            @RequestHeader(value = "Authorization", required = false) String authHeader,
+            jakarta.servlet.http.HttpServletRequest servletRequest) {
+        // Allow tokens passed in several possible header names or as raw value
+        String token = null;
+        if (authHeader != null && !authHeader.isBlank()) {
+            token = authHeader.startsWith("Bearer ") ? authHeader.substring("Bearer ".length()).trim() : authHeader.trim();
+        }
+        if ((token == null || token.isBlank())) {
+            // Fallback to common alternative headers
+            String alt = servletRequest.getHeader("Auth");
+            if (alt == null) alt = servletRequest.getHeader("X-Auth-Token");
+            if (alt == null) alt = servletRequest.getHeader("X-Authorization");
+            if (alt != null && !alt.isBlank()) token = alt.startsWith("Bearer ") ? alt.substring("Bearer ".length()).trim() : alt.trim();
+        }
+        if (token == null || token.isBlank()) {
+            log.debug("Missing buyer token in headers; attempting to fetch from user's stored token. headers Authorization='{}' Auth='{}' X-Auth-Token='{}' X-Authorization='{}'",
+                    authHeader, servletRequest.getHeader("Auth"), servletRequest.getHeader("X-Auth-Token"), servletRequest.getHeader("X-Authorization"));
+
+            // If no header token provided, try to use token saved on the user (if userId present)
+            if (purchaseDto != null && purchaseDto.getUserId() != null) {
+                try {
+                    String userToken = upbilisPurchaseService.getUserUpbolisToken(purchaseDto.getUserId());
+                    if (userToken != null && !userToken.isBlank()) {
+                        token = userToken;
+                    }
+                } catch (Exception e) {
+                    log.debug("Could not obtain Upbolis token from user {}: {}", purchaseDto.getUserId(), e.getMessage());
+                }
+            }
+
+            if (token == null || token.isBlank()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(java.util.Map.of("error", "Buyer authorization missing. Please login to UPBolis and pass the token in Authorization header (Bearer <token>) or use 'Auth'/'X-Auth-Token' header."));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(purchaseService.createPurchaseOrder(purchaseDto, token));
     }
 
     @GetMapping("/orders/{orderId}")
@@ -55,15 +92,6 @@ public class PurchaseController {
     @ApiResponse(responseCode = "200", description = "Purchases retrieved successfully")
     public ResponseEntity<org.springframework.data.domain.Page<PurchaseOrderResponseDto>> getAllPurchases(org.springframework.data.domain.Pageable pageable) {
         return ResponseEntity.ok(purchaseService.getAllPurchases(pageable));
-    }
-
-    @PostMapping("/webhook/payment-callback")
-    @Operation(summary = "Payment callback", description = "Handles payment provider webhooks")
-    @ApiResponse(responseCode = "200", description = "Webhook processed successfully")
-    public ResponseEntity<Boolean> paymentCallback(
-            @RequestHeader("X-Signature") String signature,
-            @RequestBody String payload) {
-        return ResponseEntity.ok(purchaseService.validateWebhook(signature, payload));
     }
 
     @PutMapping("/orders/{orderId}/complete")

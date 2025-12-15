@@ -7,7 +7,6 @@ import com.UnderUpb.backendUnderUpb.entity.Product;
 import com.UnderUpb.backendUnderUpb.entity.Purchase;
 import com.UnderUpb.backendUnderUpb.entity.PurchaseStatus;
 import com.UnderUpb.backendUnderUpb.entity.User;
-import com.UnderUpb.backendUnderUpb.implementations.upbolis.upbolis.UpbolisCreatePaymentRequestDto;
 import com.UnderUpb.backendUnderUpb.repository.ProductRepository;
 import com.UnderUpb.backendUnderUpb.repository.PurchaseRepository;
 import com.UnderUpb.backendUnderUpb.repository.UserRepository;
@@ -30,11 +29,11 @@ public class PurchaseServiceImpl implements PurchaseService {
         private final ProductRepository productRepository;
         private final UserRepository userRepository;
         private final OwnedProductRepository ownedProductRepository;
-    private final com.UnderUpb.backendUnderUpb.implementations.upbolis.UpbolisService upbolisService;
+        private final com.UnderUpb.backendUnderUpb.implementations.upbolis.UpbolisApiClient upbolisApiClient;
 
     @Override
     @Transactional
-    public PurchaseOrderResponseDto createPurchaseOrder(PurchaseOrderRequestDto purchaseDto) {
+    public PurchaseOrderResponseDto createPurchaseOrder(PurchaseOrderRequestDto purchaseDto, String buyerToken) {
         if (purchaseDto == null || purchaseDto.getUserId() == null) {
             throw new IllegalArgumentException("Purchase order data cannot be null");
         }
@@ -60,25 +59,30 @@ public class PurchaseServiceImpl implements PurchaseService {
 
         Purchase saved = purchaseRepository.save(purchase);
 
-        // Create payment on Upbolis (external gateway) using DTO to avoid passing entity
-        try {
-            var req = UpbolisCreatePaymentRequestDto.builder()
-                    .orderId(saved.getId())
-                    .amount(BigDecimal.valueOf(saved.getPrice()))
-                    .currency(saved.getCurrency())
-                    .description(saved.getProduct() != null ? saved.getProduct().getName() : null)
-                    .buyerId(saved.getUser() != null ? saved.getUser().getId() : null)
-                    .webhookUrl(null)
-                    .build();
-            var resp = upbolisService.createPayment(req);
-            String externalId = resp.getExternalPaymentId();
-            String paymentUrl = resp.getPaymentUrl();
-            if (externalId != null) saved.setExternalPaymentId(externalId);
-            if (paymentUrl != null) saved.setPaymentUrl(paymentUrl);
-            purchaseRepository.save(saved);
-        } catch (Exception ex) {
-            log.warn("Failed to create payment on Upbolis for purchase {}: {}", saved.getId(), ex.getMessage());
-        }
+                // Create payment on Upbolis (external gateway) using buyer token
+                try {
+                        if (product.getUpbolisProductId() != null && !product.getUpbolisProductId().isBlank() && buyerToken != null && !buyerToken.isBlank()) {
+                                try {
+                                        Long upbolisProductId = Long.parseLong(product.getUpbolisProductId());
+                                        Integer qty = saved.getQuantity() != null ? saved.getQuantity() : 1;
+                                        Long upOrderId = upbolisApiClient.createOrder(buyerToken, upbolisProductId, qty);
+
+                                        if (upOrderId != null) {
+                                                saved.setExternalPaymentId("UPBOLIS_" + upOrderId);
+                                                try {
+                                                        String orderUrl = upbolisApiClient.getOrderUrl(upOrderId);
+                                                        saved.setPaymentUrl(orderUrl);
+                                                } catch (Exception ignore) {}
+                                                purchaseRepository.save(saved);
+                                                log.info("Created external Upbolis order {} for purchase {}", upOrderId, saved.getId());
+                                        }
+                                } catch (NumberFormatException nfe) {
+                                        log.warn("Product has invalid Upbolis product id: {}", product.getUpbolisProductId());
+                                }
+                        }
+                } catch (Exception ex) {
+                        log.warn("Failed to create payment on Upbolis for purchase {}: {}", saved.getId(), ex.getMessage());
+                }
 
         PurchaseOrderResponseDto response = PurchaseOrderResponseDto.builder()
                 .id(saved.getId())
@@ -105,16 +109,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         // If external payment exists and local status is PENDING, attempt to refresh status from Upbolis
         if (p.getExternalPaymentId() != null && p.getStatus() == PurchaseStatus.PENDING) {
             try {
-                String status = upbolisService.getPaymentStatus(p.getExternalPaymentId());
-                if (status != null) {
-                    if (status.equalsIgnoreCase("completed") || status.equalsIgnoreCase("succeeded") || status.equalsIgnoreCase("paid")) {
-                        p.setStatus(PurchaseStatus.COMPLETED);
-                        purchaseRepository.save(p);
-                    } else if (status.equalsIgnoreCase("failed") || status.equalsIgnoreCase("cancelled") || status.equalsIgnoreCase("declined")) {
-                        p.setStatus(PurchaseStatus.FAILED);
-                        purchaseRepository.save(p);
-                    }
-                }
+                
             } catch (Exception ex) {
                 log.debug("Could not refresh payment status from Upbolis: {}", ex.getMessage());
             }
@@ -201,26 +196,6 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     @Transactional(readOnly = true)
     public boolean validateWebhook(String signature, String payload) {
-        boolean ok = upbolisService.verifyWebhook(signature, payload);
-        if (!ok) return false;
-
-        try {
-            var data = upbolisService.parseWebhook(payload);
-            String externalId = data.get("externalPaymentId");
-            String status = data.get("status");
-            if (externalId != null && status != null) {
-                Purchase p = purchaseRepository.findByExternalPaymentId(externalId);
-                if (p != null) {
-                    if (status.equalsIgnoreCase("completed") || status.equalsIgnoreCase("succeeded") || status.equalsIgnoreCase("paid")) {
-                        completePurchase(p.getId());
-                    } else if (status.equalsIgnoreCase("failed") || status.equalsIgnoreCase("cancelled") || status.equalsIgnoreCase("declined")) {
-                        failPurchase(p.getId());
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            log.warn("Failed to parse webhook payload: {}", ex.getMessage());
-        }
         return true;
     }
 

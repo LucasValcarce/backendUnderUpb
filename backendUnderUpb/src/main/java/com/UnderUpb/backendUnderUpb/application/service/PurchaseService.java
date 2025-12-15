@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 
 public interface PurchaseService {
-    PurchaseOrderResponseDto createPurchaseOrder(PurchaseOrderRequestDto purchaseDto);
+    PurchaseOrderResponseDto createPurchaseOrder(PurchaseOrderRequestDto purchaseDto, String buyerToken);
     PurchaseOrderResponseDto getPurchaseOrder(UUID orderId);
     boolean validateWebhook(String signature, String payload);
     PurchaseOrderResponseDto completePurchase(UUID orderId);

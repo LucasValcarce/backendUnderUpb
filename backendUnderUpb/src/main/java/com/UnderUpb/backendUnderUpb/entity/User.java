@@ -40,6 +40,12 @@ public class User extends AuditableEntity {
     @Column(name = "current_level")
     private Integer currentLevel;
 
+    @Column(name = "username", length = 100, unique = true)
+    private String username;
+
+    @Column(name = "upbolis_token", length = 1000)
+    private String upbolisToken;
+
     @PrePersist
     public void ensureId() {
         if (this.id == null) this.id = UUID.randomUUID();
@@ -48,4 +54,7 @@ public class User extends AuditableEntity {
         if (this.score == null) this.score = 0;
         if (this.currentLevel == null) this.currentLevel = 1;
     }
+
+    @Column(name = "webhook_buyer_username", length = 200)
+    private String webhookBuyerUsername;
 }

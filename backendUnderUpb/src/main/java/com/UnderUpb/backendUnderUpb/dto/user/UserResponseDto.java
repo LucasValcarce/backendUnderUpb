@@ -23,6 +23,7 @@ public class UserResponseDto {
     private Integer maxLifePoints;
     private Instant createdDate;
     private Instant updatedDate;
+    private String webhookBuyerUsername;
     private List<PurchasedItemDto> purchases;
     private List<OwnedProductDto> ownedProducts;
 }

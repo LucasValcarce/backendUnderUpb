@@ -15,6 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "products")
 public class Product extends AuditableEntity {
 
@@ -36,6 +37,9 @@ public class Product extends AuditableEntity {
 
     @Column(name = "currency", length = 10)
     private String currency;
+
+    @Column(name = "upbolis_product_id", length = 200, unique = true)
+    private String upbolisProductId;
 
     @PrePersist
     public void ensureId() {

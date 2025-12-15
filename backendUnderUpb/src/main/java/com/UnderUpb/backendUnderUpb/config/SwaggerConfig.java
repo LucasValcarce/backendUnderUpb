@@ -33,6 +33,12 @@ public class SwaggerConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
-                                .description("JWT Bearer token for API authentication")));
+                                .description("JWT Bearer token for API authentication")))
+                .tags(java.util.Arrays.asList(
+                        new io.swagger.v3.oas.models.tags.Tag().name("Upbolis - Webhooks").description("Endpoints to receive and test webhooks from Upbolis"),
+                        new io.swagger.v3.oas.models.tags.Tag().name("Upbolis - Users").description("Endpoints for user authentication and status with Upbolis"),
+                        new io.swagger.v3.oas.models.tags.Tag().name("Upbolis - Products").description("Endpoints to sync products between local system and Upbolis"),
+                        new io.swagger.v3.oas.models.tags.Tag().name("Upbolis - Purchases").description("Endpoints for purchases and purchase verification using Upbolis")
+                ));
     }
 }

@@ -7,10 +7,13 @@ import com.UnderUpb.backendUnderUpb.entity.Product;
 import com.UnderUpb.backendUnderUpb.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.UnderUpb.backendUnderUpb.event.ProductChangeEvent;
 
 import java.util.UUID;
 
@@ -19,6 +22,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -31,6 +35,11 @@ public class ProductServiceImpl implements ProductService {
                 .currency(productDto.getCurrency())
                 .build();
         var saved = productRepository.save(product);
+        // Publicar evento para sincronización automática (creación)
+        eventPublisher.publishEvent(ProductChangeEvent.builder()
+                .product(saved)
+                .action(ProductChangeEvent.Action.CREATED)
+                .build());
         return toDto(saved);
     }
 
@@ -59,16 +68,28 @@ public class ProductServiceImpl implements ProductService {
         if (productDto.getPrice() != null) product.setPrice(productDto.getPrice());
         if (productDto.getCurrency() != null) product.setCurrency(productDto.getCurrency());
         var saved = productRepository.save(product);
+        // Publicar evento para sincronización automática (actualización)
+        eventPublisher.publishEvent(ProductChangeEvent.builder()
+                .product(saved)
+                .action(ProductChangeEvent.Action.UPDATED)
+                .build());
         return toDto(saved);
     }
 
     @Override
     @Transactional
     public void deleteProduct(UUID id) {
-        if (!productRepository.existsById(id)) {
-            throw new IllegalArgumentException("Product not found with ID: " + id);
-        }
+        var product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+
+        // Eliminamos el producto localmente
         productRepository.deleteById(id);
+
+        // Publicar evento para sincronización automática (eliminación)
+        eventPublisher.publishEvent(ProductChangeEvent.builder()
+                .product(product)
+                .action(ProductChangeEvent.Action.DELETED)
+                .build());
     }
 
     private ProductResponseDto toDto(Product p) {
