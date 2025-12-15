@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -90,9 +91,7 @@ public class UpbilisPurchaseService {
     public Purchase processPurchaseWebhook(String buyerUsername, String productName, Double amount, Long upbolisProductId, String transactionId) {
         try {
             // Encontrar el usuario por username
-            Optional<User> userOpt = userRepository.findAll().stream()
-                    .filter(u -> u.getUsername() != null && u.getUsername().equals(buyerUsername))
-                    .findFirst();
+            Optional<User> userOpt = userRepository.findUserByUsername(buyerUsername);
 
             if (userOpt.isEmpty()) {
                 throw new RuntimeException("Buyer user not found: " + buyerUsername);
@@ -112,10 +111,7 @@ public class UpbilisPurchaseService {
             // 2) Try matching by product name or description (case-insensitive contains)
             if (product == null && productName != null && !productName.isBlank()) {
                 String pn = productName.trim().toLowerCase();
-                product = productRepository.findAll().stream()
-                        .filter(p -> (p.getName() != null && p.getName().toLowerCase().contains(pn))
-                                || (p.getDescription() != null && p.getDescription().toLowerCase().contains(pn)))
-                        .findFirst().orElse(null);
+                product = productRepository.findByName(pn).orElse(null);
                 if (product != null) log.debug("Resolved product by name/description match: '{}' -> {}", productName, product.getId());
             }
 
@@ -153,16 +149,13 @@ public class UpbilisPurchaseService {
             }
 
             // Try to find an existing purchase (prefer PENDING) for this user+product
-            java.util.List<Purchase> userPurchases = purchaseRepository.findByUserId(buyer.getId());
+            List<Purchase> userPurchases = purchaseRepository.findByUserId(buyer.getId());
 
             Product finalProduct = product;
-            Purchase pending = userPurchases.stream()
-                    .filter(p -> p.getProduct() != null && p.getProduct().getId().equals(finalProduct.getId()))
-                    .filter(p -> p.getStatus() == PurchaseStatus.PENDING)
-                    .sorted((a, b) -> (a.getCreatedDate() == null ? 0 : a.getCreatedDate().compareTo(b.getCreatedDate())))
-                    .reduce((first, second) -> second).orElse(null); // get the most recent pending
+            Optional<Purchase> latestPending = purchaseRepository.findLatestPendingByProductIdAndUserId(finalProduct.getId(), buyer.getId());
 
-            if (pending != null) {
+            if (latestPending.isPresent()) {
+                Purchase pending = latestPending.get();
                 // Update the pending purchase to completed
                 pending.setStatus(PurchaseStatus.COMPLETED);
                 if (amount != null) pending.setPrice(amount);
@@ -173,7 +166,6 @@ public class UpbilisPurchaseService {
 
                 Purchase updated = purchaseRepository.save(pending);
 
-                // Ensure owned product exists for this completed purchase
                 try {
                     boolean alreadyOwned = ownedProductRepository.findByUserId(buyer.getId()).stream()
                             .anyMatch(op -> op.getProduct() != null && op.getProduct().getId().equals(finalProduct.getId()));
@@ -198,10 +190,7 @@ public class UpbilisPurchaseService {
             }
 
             // If no pending purchase, but maybe an existing completed one exists - ensure owned product then return it
-            Purchase existingCompleted = userPurchases.stream()
-                    .filter(p -> p.getProduct() != null && p.getProduct().getId().equals(finalProduct.getId()))
-                    .filter(p -> p.getStatus() == PurchaseStatus.COMPLETED)
-                    .findFirst().orElse(null);
+            Purchase existingCompleted = purchaseRepository.findCompletedByProductIdAndUserId(product.getId(), buyer.getId()).orElse(null);
 
             if (existingCompleted != null) {
                 try {

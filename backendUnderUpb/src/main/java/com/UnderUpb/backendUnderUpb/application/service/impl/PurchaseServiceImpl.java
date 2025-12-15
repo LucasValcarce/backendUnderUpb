@@ -57,44 +57,41 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .status(PurchaseStatus.PENDING)
                 .build();
 
-        Purchase saved = purchaseRepository.save(purchase);
-
-                // Create payment on Upbolis (external gateway) using buyer token
+        // Create payment on Upbolis (external gateway) using buyer token
+        try {
+            if (product.getUpbolisProductId() != null && !product.getUpbolisProductId().isBlank() && buyerToken != null && !buyerToken.isBlank()) {
                 try {
-                        if (product.getUpbolisProductId() != null && !product.getUpbolisProductId().isBlank() && buyerToken != null && !buyerToken.isBlank()) {
-                                try {
-                                        Long upbolisProductId = Long.parseLong(product.getUpbolisProductId());
-                                        Integer qty = saved.getQuantity() != null ? saved.getQuantity() : 1;
-                                        Long upOrderId = upbolisApiClient.createOrder(buyerToken, upbolisProductId, qty);
+                    Long upbolisProductId = Long.parseLong(product.getUpbolisProductId());
+                    Integer qty = purchase.getQuantity() != null ? purchase.getQuantity() : 1;
+                    Long upOrderId = upbolisApiClient.createOrder(buyerToken, upbolisProductId, qty);
 
-                                        if (upOrderId != null) {
-                                                saved.setExternalPaymentId("UPBOLIS_" + upOrderId);
-                                                try {
-                                                        String orderUrl = upbolisApiClient.getOrderUrl(upOrderId);
-                                                        saved.setPaymentUrl(orderUrl);
-                                                } catch (Exception ignore) {}
-                                                purchaseRepository.save(saved);
-                                                log.info("Created external Upbolis order {} for purchase {}", upOrderId, saved.getId());
-                                        }
-                                } catch (NumberFormatException nfe) {
-                                        log.warn("Product has invalid Upbolis product id: {}", product.getUpbolisProductId());
-                                }
-                        }
-                } catch (Exception ex) {
-                        log.warn("Failed to create payment on Upbolis for purchase {}: {}", saved.getId(), ex.getMessage());
+                    if (upOrderId != null) {
+                        purchase.setExternalPaymentId("UPBOLIS_" + upOrderId);
+                        try {
+                            String orderUrl = upbolisApiClient.getOrderUrl(upOrderId);
+                            purchase.setPaymentUrl(orderUrl);
+                        } catch (Exception ignore) {}
+                        log.info("Created external Upbolis order {} for purchase {}", upOrderId, purchase.getId());
+                    }
+            } catch (NumberFormatException nfe) {
+                    log.warn("Product has invalid Upbolis product id: {}", product.getUpbolisProductId());
                 }
+            }
+        } catch (Exception ex) {
+                log.warn("Failed to create payment on Upbolis for purchase {}: {}", purchase.getId(), ex.getMessage());
+        }
 
         PurchaseOrderResponseDto response = PurchaseOrderResponseDto.builder()
-                .id(saved.getId())
+                .id(purchase.getId())
                 .userId(user.getId())
                 .productId(product.getId())
                 .itemName(product.getName())
-                .amount(saved.getPrice())
-                .currency(saved.getCurrency())
+                .amount(purchase.getPrice())
+                .currency(purchase.getCurrency())
                 .description(product.getDescription())
-                .status(saved.getStatus().name())
-                .externalPaymentId(saved.getExternalPaymentId())
-                .paymentUrl(saved.getPaymentUrl())
+                .status(purchase.getStatus().name())
+                .externalPaymentId(purchase.getExternalPaymentId())
+                .paymentUrl(purchase.getPaymentUrl())
                 .build();
 
         log.info("Purchase order created with ID: {}", response.getId());

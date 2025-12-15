@@ -46,6 +46,8 @@ public class UserServiceImpl implements UserService {
                 .maxLifePoints(userDto.getLifePoints() != null ? userDto.getLifePoints() : 100)
                 .score(userDto.getScore() != null ? userDto.getScore() : 0)
                 .currentLevel(userDto.getCurrentLevel() != null ? userDto.getCurrentLevel() : 1)
+                .username(userDto.getUpbolisUsername())
+                .webhookBuyerUsername(userDto.getUpbolisUsername())
                 .build();
         User savedUser = userRepository.save(user);
         log.info("User created with ID: {}", savedUser.getId());
@@ -94,6 +96,10 @@ public class UserServiceImpl implements UserService {
         }
         if (userDto.getCurrentLevel() != null) {
             user.setCurrentLevel(userDto.getCurrentLevel());
+        }
+        if (userDto.getUpbolisUsername() != null) {
+            user.setUsername(userDto.getUpbolisUsername());
+            user.setWebhookBuyerUsername(userDto.getUpbolisUsername());
         }
         User updatedUser = userRepository.save(user);
         log.info("User updated with ID: {}", userId);

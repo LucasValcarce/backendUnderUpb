@@ -23,7 +23,7 @@ public class Product extends AuditableEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
-    @Column(name = "name", length = 200, nullable = false)
+    @Column(name = "name", length = 200, nullable = false, unique = true)
     private String name;
 
     @Column(name = "type", length = 100)

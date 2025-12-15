@@ -11,6 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -173,7 +177,7 @@ public class UpbolisApiClient {
                 // If still null, try to extract ID from Location header
                 if (dto.getProductId() == null) {
                     try {
-                        java.net.URI loc = response.getHeaders().getLocation();
+                        URI loc = response.getHeaders().getLocation();
                         if (loc != null) {
                             String path = loc.getPath();
                             if (path != null) {
@@ -206,16 +210,6 @@ public class UpbolisApiClient {
             log.error("Error creating product in Upbolis", e);
             throw new RuntimeException("Failed to create product in Upbolis: " + e.getMessage(), e);
         }
-    }
-
-    /**
-     * Actualiza el precio de un producto en Upbolis
-     */
-    public UpbolisProductDto updateProductPrice(String token, Long productId, Double price) {
-        UpbolisCreateProductDto dto = UpbolisCreateProductDto.builder()
-                .price(price)
-                .build();
-        return updateProduct(token, productId, dto);
     }
 
     /**
@@ -305,33 +299,6 @@ public class UpbolisApiClient {
     }
 
     /**
-     * Verifica si un usuario existe en Upbolis
-     */
-    public boolean verifyUserExists(String token, String username) {
-        try {
-            String url = buildUrl("users/" + username + "/exists");
-            log.debug("Upbolis verify user URL: {}", url);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(token);
-
-            HttpEntity<?> request = new HttpEntity<>(headers);
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    request,
-                    String.class
-            );
-
-            return response.getStatusCode().is2xxSuccessful();
-        } catch (RestClientException e) {
-            log.warn("Error verifying user in Upbolis: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    /**
      * Obtiene los detalles de un producto
      */
     public UpbolisProductDto getProductDetails(String token, Long productId) {
@@ -368,8 +335,8 @@ public class UpbolisApiClient {
 
             ObjectMapper mapper = new ObjectMapper();
             // Build payload { items: [{ product_id: ..., quantity: ... }] }
-            String body = mapper.writeValueAsString(java.util.Map.of(
-                    "items", java.util.List.of(java.util.Map.of(
+            String body = mapper.writeValueAsString(Map.of(
+                    "items", List.of(Map.of(
                             "product_id", upbolisProductId,
                             "quantity", quantity != null ? quantity : 1
                     ))
@@ -403,7 +370,7 @@ public class UpbolisApiClient {
                 }
 
                 // fallback: try Location header
-                java.net.URI loc = response.getHeaders().getLocation();
+                URI loc = response.getHeaders().getLocation();
                 if (loc != null) {
                     String[] parts = loc.getPath().split("/");
                     String last = parts[parts.length - 1];
