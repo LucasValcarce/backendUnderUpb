@@ -475,7 +475,9 @@ public class UpbolisApiClient {
      */
     public void deleteProduct(String token, Long productId) {
         try {
-            String url = buildUrl("ucts/" + productId);
+            // Correct endpoint for seller product deletion
+            String url = buildUrl("seller/products/" + productId);
+            log.debug("Upbolis delete product URL: {}", url);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);
@@ -489,7 +491,7 @@ public class UpbolisApiClient {
                     Void.class
             );
 
-            log.info("Product {} deleted in Upbolis", productId);
+            log.info("Product {} deleted in Upbolis (seller/products endpoint)", productId);
         } catch (RestClientException e) {
             log.warn("Error deleting product in Upbolis (may not exist or endpoint unsupported): {}", e.getMessage());
             // No lanzar excepción para no bloquear la operación local
