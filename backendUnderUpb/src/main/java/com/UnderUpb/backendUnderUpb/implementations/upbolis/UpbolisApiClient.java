@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.*;
+import org.springframework.http.HttpStatus;
+import java.util.function.Function;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpClientErrorException; 
 
 @Slf4j
 @Component
@@ -118,6 +120,63 @@ public class UpbolisApiClient {
     }
 
     /**
+     * Refreshes the system token by logging in and stores it in memory so subsequent calls use it.
+     */
+    private synchronized String refreshSystemToken() {
+        try {
+            log.info("Refreshing Upbolis system token via login");
+            UpbolisLoginResponseDto resp = loginUser(systemEmail, systemPassword);
+            if (resp != null && resp.getToken() != null) {
+                systemTokenOverride = resp.getToken();
+                log.info("System token refreshed and stored");
+                return systemTokenOverride;
+            }
+            throw new RuntimeException("Login did not return a system token");
+        } catch (Exception e) {
+            log.error("Failed to refresh system token: {}", e.getMessage());
+            throw new RuntimeException("Failed to refresh system token: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Executes the given request function and if a 401 Unauthorized is returned and the provided
+     * token corresponds to the system token, refreshes the system token and retries once.
+     */
+    private <T> ResponseEntity<T> executeWithSystemTokenRetry(String token, Function<String, ResponseEntity<T>> request) {
+        try {
+            return request.apply(token);
+        } catch (HttpClientErrorException hcee) {
+            try {
+                if (hcee.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                    log.warn("Received 401 from Upbolis; checking if token is the system token to attempt refresh");
+
+                    boolean isSystemToken = false;
+                    try {
+                        String currentSystem = systemTokenOverride;
+                        if (currentSystem == null || currentSystem.isBlank()) currentSystem = getSystemToken();
+                        isSystemToken = token != null && token.equals(currentSystem);
+                    } catch (Exception ignore) {
+                        log.debug("Could not determine current system token: {}", ignore.getMessage());
+                    }
+
+                    if (isSystemToken) {
+                        String newToken = refreshSystemToken();
+                        try {
+                            return request.apply(newToken);
+                        } catch (HttpClientErrorException hcee2) {
+                            log.error("Retry after refreshing system token failed: status={} body={}", hcee2.getStatusCode(), hcee2.getResponseBodyAsString());
+                            throw hcee2;
+                        }
+                    }
+                }
+            } catch (Exception ex) {
+                log.debug("Error during auth-retry handling: {}", ex.getMessage());
+            }
+            throw hcee;
+        }
+    }
+
+    /**
      * Crea un producto en Upbolis
      */
     public UpbolisProductDto createProduct(String token, String productName, Double price, String description) {
@@ -137,19 +196,27 @@ public class UpbolisApiClient {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
             headers.setBearerAuth(token);
 
-            HttpEntity<UpbolisCreateProductDto> request = new HttpEntity<>(productDto, headers);
-
-            // Use String response so we can robustly parse id whether it's `product_id`, `id` or nested
-            ResponseEntity<String> response = restTemplate.postForEntity(
-                    url,
-                    request,
-                    String.class
-            );
+            // use helper which will retry with refreshed system token if a 401 occurs and the token is the system token
+            ResponseEntity<String> response = executeWithSystemTokenRetry(token, tkn -> {
+                HttpHeaders rh = new HttpHeaders();
+                rh.setContentType(MediaType.APPLICATION_JSON);
+                rh.setAccept(List.of(MediaType.APPLICATION_JSON));
+                rh.setBearerAuth(tkn);
+                HttpEntity<UpbolisCreateProductDto> request = new HttpEntity<>(productDto, rh);
+                return restTemplate.postForEntity(url, request, String.class);
+            });
 
             String body = response.getBody();
-            log.debug("Upbolis create product response body: {}", body);
+            log.debug("Upbolis create product response: status={} headers={} body={}", response.getStatusCode(), response.getHeaders(), body);
+
+            // Quick detection of non-JSON responses (HTML, errors, etc)
+            if (body != null && body.trim().startsWith("<")) {
+                log.error("Upbolis create product returned non-JSON response (likely HTML). status={} headers={} bodySnippet={}", response.getStatusCode(), response.getHeaders(), body.length() > 1024 ? body.substring(0, 1024) : body);
+                throw new RuntimeException("Failed to create product in Upbolis: non-JSON response returned (HTML or error page)");
+            }
 
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -199,7 +266,7 @@ public class UpbolisApiClient {
                 log.info("Product created successfully in Upbolis: {}", productName);
                 return dto;
             } catch (IOException e) {
-                log.error("Error parsing Upbolis create product response: {}", e.getMessage());
+                log.error("Error parsing Upbolis create product response: {}. responseStatus={} headers={} bodySnippet={}", e.getMessage(), response.getStatusCode(), response.getHeaders(), (body == null ? "" : (body.length() > 1024 ? body.substring(0, 1024) : body)));
                 throw new RuntimeException("Failed to create product in Upbolis: could not parse response: " + e.getMessage());
             }
         } catch (HttpClientErrorException hcee) {
@@ -222,19 +289,25 @@ public class UpbolisApiClient {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
             headers.setBearerAuth(token);
 
-            HttpEntity<UpbolisCreateProductDto> request = new HttpEntity<>(updateDto, headers);
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.PUT,
-                    request,
-                    String.class
-            );
+            ResponseEntity<String> response = executeWithSystemTokenRetry(token, tkn -> {
+                HttpHeaders rh = new HttpHeaders();
+                rh.setContentType(MediaType.APPLICATION_JSON);
+                rh.setAccept(List.of(MediaType.APPLICATION_JSON));
+                rh.setBearerAuth(tkn);
+                HttpEntity<UpbolisCreateProductDto> request = new HttpEntity<>(updateDto, rh);
+                return restTemplate.exchange(url, HttpMethod.PUT, request, String.class);
+            });
 
             String body = response.getBody();
-            log.debug("Upbolis update product response body: {}", body);
+            log.debug("Upbolis update product response: status={} headers={} body={}", response.getStatusCode(), response.getHeaders(), body);
+
+            if (body != null && body.trim().startsWith("<")) {
+                log.error("Upbolis update product returned non-JSON response. status={} headers={} bodySnippet={}", response.getStatusCode(), response.getHeaders(), body.length() > 1024 ? body.substring(0, 1024) : body);
+                throw new RuntimeException("Failed to update product in Upbolis: non-JSON response returned (HTML or error page)");
+            }
 
             ObjectMapper mapper = new ObjectMapper();
             try {
@@ -261,7 +334,7 @@ public class UpbolisApiClient {
                 log.info("Product updated successfully in Upbolis: {}", productId);
                 return dto;
             } catch (IOException e) {
-                log.error("Error parsing Upbolis update product response: {}", e.getMessage());
+                log.error("Error parsing Upbolis update product response: {}. responseStatus={} headers={} bodySnippet={}", e.getMessage(), response.getStatusCode(), response.getHeaders(), (body == null ? "" : (body.length() > 1024 ? body.substring(0, 1024) : body)));
                 throw new RuntimeException("Failed to update product in Upbolis: could not parse response: " + e.getMessage());
             }
         } catch (RestClientException e) {
@@ -278,17 +351,12 @@ public class UpbolisApiClient {
             String url = buildUrl("seller/products");
             log.debug("Upbolis user products URL: {}", url);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(token);
-
-            HttpEntity<?> request = new HttpEntity<>(headers);
-
-            ResponseEntity<UpbolisProductDto[]> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    request,
-                    UpbolisProductDto[].class
-            );
+            ResponseEntity<UpbolisProductDto[]> response = executeWithSystemTokenRetry(token, tkn -> {
+                HttpHeaders rh = new HttpHeaders();
+                rh.setBearerAuth(tkn);
+                HttpEntity<?> request = new HttpEntity<>(rh);
+                return restTemplate.exchange(url, HttpMethod.GET, request, UpbolisProductDto[].class);
+            });
 
             log.info("Products retrieved successfully for user");
             return response.getBody();
@@ -305,17 +373,12 @@ public class UpbolisApiClient {
         try {
             String url = buildUrl("seller/products/" + productId);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(token);
-
-            HttpEntity<?> request = new HttpEntity<>(headers);
-
-            ResponseEntity<UpbolisProductDto> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    request,
-                    UpbolisProductDto.class
-            );
+            ResponseEntity<UpbolisProductDto> response = executeWithSystemTokenRetry(token, tkn -> {
+                HttpHeaders rh = new HttpHeaders();
+                rh.setBearerAuth(tkn);
+                HttpEntity<?> request = new HttpEntity<>(rh);
+                return restTemplate.exchange(url, HttpMethod.GET, request, UpbolisProductDto.class);
+            });
 
             return response.getBody();
         } catch (RestClientException e) {
@@ -346,13 +409,26 @@ public class UpbolisApiClient {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setAccept(List.of(MediaType.APPLICATION_JSON));
             headers.setBearerAuth(token);
 
             HttpEntity<String> request = new HttpEntity<>(body, headers);
 
-            ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+            ResponseEntity<String> response = executeWithSystemTokenRetry(token, tkn -> {
+                HttpHeaders rh = new HttpHeaders();
+                rh.setContentType(MediaType.APPLICATION_JSON);
+                rh.setAccept(List.of(MediaType.APPLICATION_JSON));
+                rh.setBearerAuth(tkn);
+                HttpEntity<String> req = new HttpEntity<>(body, rh);
+                return restTemplate.postForEntity(url, req, String.class);
+            });
             String respBody = response.getBody();
             log.debug("Upbolis create order response: status={} headers={} body={}", response.getStatusCode(), response.getHeaders(), respBody);
+
+            if (respBody != null && respBody.trim().startsWith("<")) {
+                log.error("Upbolis create order returned non-JSON response. status={} headers={} bodySnippet={}", response.getStatusCode(), response.getHeaders(), respBody.length() > 1024 ? respBody.substring(0, 1024) : respBody);
+                throw new RuntimeException("Failed to create order in Upbolis: non-JSON response returned (HTML or error page)");
+            }
 
             try {
                 JsonNode root = mapper.readTree(respBody == null ? "" : respBody);
@@ -379,7 +455,7 @@ public class UpbolisApiClient {
 
                 throw new RuntimeException("Failed to extract order id from Upbolis response");
             } catch (IOException ioe) {
-                log.error("Error parsing create order response: {}", ioe.getMessage());
+                log.error("Error parsing create order response: {}. responseStatus={} headers={} bodySnippet={}", ioe.getMessage(), response.getStatusCode(), response.getHeaders(), (respBody == null ? "" : (respBody.length() > 1024 ? respBody.substring(0, 1024) : respBody)));
                 throw new RuntimeException("Failed to create order in Upbolis: " + ioe.getMessage(), ioe);
             }
 
@@ -446,17 +522,12 @@ public class UpbolisApiClient {
             String url = buildUrl("seller/products/" + productId);
             log.debug("Upbolis delete product URL: {}", url);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(token);
-
-            HttpEntity<?> request = new HttpEntity<>(headers);
-
-            restTemplate.exchange(
-                    url,
-                    HttpMethod.DELETE,
-                    request,
-                    Void.class
-            );
+            executeWithSystemTokenRetry(token, tkn -> {
+                HttpHeaders rh = new HttpHeaders();
+                rh.setBearerAuth(tkn);
+                HttpEntity<?> request = new HttpEntity<>(rh);
+                return restTemplate.exchange(url, HttpMethod.DELETE, request, Void.class);
+            });
 
             log.info("Product {} deleted in Upbolis (seller/products endpoint)", productId);
         } catch (RestClientException e) {
