@@ -1,4 +1,4 @@
-package com.UnderUpb.backendUnderUpb.adapter.rest.controller.upbolis;
+package com.UnderUpb.backendUnderUpb.adapter.rest.controller.implementations.upbolis;
 
 import com.UnderUpb.backendUnderUpb.dto.upbolis.UpbolisLoginRequestDto;
 import com.UnderUpb.backendUnderUpb.dto.upbolis.UpbolisLoginResponseDto;
